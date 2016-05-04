@@ -14,5 +14,9 @@
     "babelify": "^7.3.0",
     "serverless-client-s3": "^2.0.0",
     "serverless-optimizer-plugin": "^2.5.1"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0"
   }
 }
