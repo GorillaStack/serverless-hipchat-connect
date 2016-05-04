@@ -15,5 +15,5 @@ module.exports = function(grunt) {
 
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.registerTask('default', ['uglify']);
+  grunt.registerTask('default', ['copy']);
 };
