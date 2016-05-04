@@ -1,5 +1,12 @@
 {
   "name": "serverless-hipchat-connect",
-  "custom": {},
-  "plugins": []
+  "custom": {
+    "client": {
+      "bucketName": "serverless-hipchat-connect-client.${stage}.${region}"
+    }
+  },
+  "plugins": [
+    "serverless-optimizer-plugin",
+    "serverless-client-s3"
+  ]
 }
