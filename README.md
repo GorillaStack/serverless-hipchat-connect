@@ -5,10 +5,22 @@ This is a repository originally written by [GorillaStack](www.gorillastack.com) 
 ## Components
 
 || Component || Purpose ||
+--------------------------
 | [serverless](https://github.com/serverless/serverless) | Framework for deploying lambda, API Gateway and other components to AWS |
 | | |
 
 ## Usage
+
+1. Install serverless: `npm install serverless -g`
+1. Deploy into a new AWS account `sls project init`
+1. Deploy resources (IAM roles etc) `sls resources deploy`
+1. Deploy endpoints and lambdas `sls dash deploy`
+1. Deploy client-side resources `grunt copy && sls client deploy` (see note below)
+1. Get function logs `sls function logs restApi/example/healthcheck`
+1. Run locally:
+
+    ngrok http -subdomain <subdomain> 3000
+    sls offline start
 
 ### Client assets to s3
 
