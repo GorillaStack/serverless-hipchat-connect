@@ -11,9 +11,6 @@
 * The comprehensive HipChat API reference can be found here: https://www.hipchat.com/docs/apiv2
 */
 
-import _ from 'lodash';
-import fs from 'fs';
-
 //var express = require('express');
 //import bodyParser from 'body-parser';
 
@@ -42,28 +39,6 @@ let installationStore = {};
 
 //Store for API access tokens, used when making REST calls to HipChat
 let accessTokenStore = {};
-
-/**
-* Your add-on exposes a capabilities descriptor , which tells HipChat how the add-on plans to extend it.
-*
-* This add-on's capability descriptor can be found here: /capabilities.json
-* The variable ${host} is substituted based on the base URL of your add-on.
-*/
-function substituteHostName(file, req, callback) {
-  fs.readFile(file, function (err, data) {
-    var content = _.template(data, {
-      host: 'https://' + req.headers.host
-    });
-    callback(content);
-  });
-}
-
-function sendDescriptor(file, req, res) {
-  substituteHostName(file, req, function (content) {
-    res.set('Content-Type', 'application/json');
-    res.send(content);
-  });
-}
 
 app.get('/descriptor', function (req, res) {
   sendDescriptor('capabilities-descriptor.json', req, res);
