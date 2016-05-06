@@ -1,0 +1,4 @@
+{
+  "name": "test-config",
+  "host": "${host}"
+}

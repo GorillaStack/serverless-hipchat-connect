@@ -5,6 +5,9 @@
   "author": "me",
   "license": "MIT",
   "private": false,
+  "scripts": {
+    "test": "node node_modules/jasmine-es6/bin/jasmine.js"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/"
@@ -21,6 +24,8 @@
     "babel-cli": "^6.8.0",
     "grunt": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
-    "grunt-run": "^0.6.0"
+    "grunt-run": "^0.6.0",
+    "jasmine": "^2.4.1",
+    "jasmine-es6": "^0.1.9"
   }
 }

@@ -11,18 +11,18 @@
 import _ from 'lodash';
 import fs from 'fs';
 
-const substituteHostName = (file, req, callback) => {
-  fs.readFile(file, function (err, data) {
-    let content = _.template(data, {
-      host: 'https://' + req.headers.host
-    });
-    callback(content);
-  });
+const substituteConfigInTemplate = (data, config) => {
+  return _.template(data)(config);
 };
 
-export function sendDescriptor(file, req, res) {
-  substituteHostName(file, req, function (content) {
-    res.set('Content-Type', 'application/json');
-    res.send(content);
+export function getCapabilityDescriptor(file, config) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(substituteConfigInTemplate(data.toString(), config));
+      }
+    });
   });
 };
