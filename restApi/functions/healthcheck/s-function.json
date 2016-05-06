@@ -9,7 +9,20 @@
   "memorySize": 1024,
   "authorizer": {},
   "custom": {
-    "excludePatterns": []
+    "excludePatterns": [],
+    "optimize": {
+      "exclude": [ "aws-sdk" ],
+      "transforms": [
+        {
+          "name": "babelify",
+          "opts": {
+            "presets": [
+              "es2015"
+            ]
+          }
+        }
+      ]
+    }
   },
   "endpoints": [
     {

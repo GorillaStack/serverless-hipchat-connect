@@ -14,7 +14,8 @@
     "babelify": "^7.3.0",
     "serverless-client-s3": "^2.0.0",
     "serverless-offline": "^2.3.2",
-    "serverless-optimizer-plugin": "^2.5.1"
+    "serverless-optimizer-plugin": "^2.5.1",
+    "winston": "^2.2.0"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",
