@@ -7,8 +7,8 @@
     "url": "http://www.gorillastack.com"
   },
   "links": {
-    "self": "{{localBaseUrl}}/atlassian-connect.json",
-    "homepage": "{{localBaseUrl}}"
+    "self": "${host}/atlassian-connect.json",
+    "homepage": "${host}"
   },
   "capabilities": {
     "hipchatApiConsumer": {
@@ -18,13 +18,13 @@
       ]
     },
     "installable": {
-      "callbackUrl": "{{localBaseUrl}}/installable"
+      "callbackUrl": "${host}/installable"
     },
     "configurable": {
-      "url": "{{localBaseUrl}}/config"
+      "url": "${host}/config"
     },
     "webhook": {
-      "url": "{{localBaseUrl}}/webhook",
+      "url": "${host}/webhook",
       "pattern": "^/hello",
       "event": "room_message",
       "name": "Hello!",
@@ -35,12 +35,12 @@
         "name": {
           "value": "Hello!"
         },
-        "queryUrl": "{{localBaseUrl}}/glance",
+        "queryUrl": "${host}/glance",
         "key": "sample.glance",
         "target": "sample.sidebar",
         "icon": {
-          "url": "{{localBaseUrl}}/img/logo.png",
-          "url@2x": "{{localBaseUrl}}/img/logo.png"
+          "url": "${host}/img/logo.png",
+          "url@2x": "${host}/img/logo.png"
         }
       }
     ],
@@ -51,7 +51,7 @@
           "value": "Hello Sidebar!"
         },
         "location": "hipchat.sidebar.right",
-        "url": "{{localBaseUrl}}/sidebar"
+        "url": "${host}/sidebar"
       }
     ],
     "dialog": [
@@ -60,7 +60,7 @@
         "title": {
           "value": "Hello Dialog!"
         },
-        "url": "{{localBaseUrl}}/dialog",
+        "url": "${host}/dialog",
         "options": {
           "style": "normal",
           "primaryAction": {
