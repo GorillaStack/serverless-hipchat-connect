@@ -7,9 +7,11 @@ This is a repository originally written by [GorillaStack](www.gorillastack.com) 
 
 ## Components
 
-Component | Purpose
-----------|--------
-[serverless](https://github.com/serverless/serverless) | Framework for deploying lambda, API Gateway and other components to AWS
+Component | Purpose | Description
+----------|---------|------------
+[serverless](https://github.com/serverless/serverless) | Application hosting | Framework for deploying lambda, API Gateway and other components to AWS
+[Winston](https://www.npmjs.com/package/winston) | Logging | Good logging solution with a variety of [transports](https://github.com/winstonjs/winston/blob/master/docs/transports.md) including AWS SNS, Email, MongoDB, Console, File etc.
+
 
 ## Usage
 
