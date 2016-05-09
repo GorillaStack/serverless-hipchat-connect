@@ -6,10 +6,13 @@ import winston from 'winston';
 *
 * $ npm install winston-rollbar
 */
-export function createLogger() {
+
+const createLogger = () => {
   return new (winston.Logger)({
     transports: [
       new (winston.transports.Console)()
     ]
   });
 };
+
+export {createLogger};

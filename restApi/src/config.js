@@ -15,7 +15,7 @@ const substituteConfigInTemplate = (data, config) => {
   return _.template(data)(config);
 };
 
-export function getCapabilityDescriptor(file, config) {
+const getCapabilityDescriptor = (file, config) => {
   return new Promise((resolve, reject) => {
     fs.readFile(file, (err, data) => {
       if (err) {
@@ -26,3 +26,5 @@ export function getCapabilityDescriptor(file, config) {
     });
   });
 };
+
+export {getCapabilityDescriptor};
