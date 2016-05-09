@@ -14,6 +14,9 @@ module.exports = function(grunt) {
     run: {
       babel: {
         exec: 'node node_modules/babel-cli/bin/babel --presets es2015 -d restApi/lib --watch restApi/src'
+      },
+      'babel-once': {
+        exec: 'node node_modules/babel-cli/bin/babel --presets es2015 -d restApi/lib restApi/src'
       }
     }
   });
