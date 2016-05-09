@@ -3,6 +3,11 @@
   "custom": {
     "client": {
       "bucketName": "${name}-client.${stage}.${region}"
+    },
+    "serverless-offline": {
+      "babelOptions": {
+        "presets": ["es2015"]
+      }
     }
   },
   "plugins": [
