@@ -8,10 +8,11 @@
 * HipChat how the add-on plans to extend it.
 */
 
-import {getCapabilityDescriptor} from '../../../restApi/src/config';
+import { getCapabilityDescriptor, getApplicationConfiguration } from '../../../restApi/src/config';
 import fs from 'fs';
 
-const TEST_FILE = './spec/restApi/src/test_file.json';
+const TEST_CAPABILITY_FILE = './spec/support/atlassian-connect.json';
+const TEST_CONFIG_FILE = './spec/support/config.json';
 
 describe('config.js', () => {
   describe('getCapabilityDescriptor', () => {
@@ -23,7 +24,7 @@ describe('config.js', () => {
     let capabiltyDescriptor = null;
 
     beforeAll((done) => {
-      getCapabilityDescriptor(TEST_FILE, config).then((result) => {
+      getCapabilityDescriptor(TEST_CAPABILITY_FILE, config).then((result) => {
         capabiltyDescriptor = JSON.parse(result);
         done();
       }, (err) => {
@@ -44,6 +45,33 @@ describe('config.js', () => {
     it('substitutes the host name', () => {
       expect(capabiltyDescriptor).not.toBeNull();
       expect(capabiltyDescriptor.host).toEqual(config.host);
+    });
+  });
+
+  describe('getApplicationConfiguration', () => {
+
+    const handleError = (err) => {
+      console.log('error');
+      console.log(err);
+      console.log(err.stack);
+    };
+
+    it('is defined', () => {
+      expect(getApplicationConfiguration).not.toBeUndefined();
+    });
+
+    it('is a function', () => {
+      expect(typeof getApplicationConfiguration).toBe('function');
+    });
+
+    it('loads the correct conig for a dev stage', (done) => {
+      process.env.SERVERLESS_STAGE = 'dev';
+      getApplicationConfiguration(TEST_CONFIG_FILE).then((config) => {
+        expect(config).not.toBeNull();
+        expect(config.attribute1).toEqual('devValue1');
+        expect(config.attribute2).toEqual('devValue2');
+        done();
+      }, handleError);
     });
   });
 });

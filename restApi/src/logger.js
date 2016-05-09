@@ -10,7 +10,9 @@ import winston from 'winston';
 const createLogger = () => {
   return new (winston.Logger)({
     transports: [
-      new (winston.transports.Console)()
+      new (winston.transports.Console)({
+        level: 'debug'
+      })
     ]
   });
 };

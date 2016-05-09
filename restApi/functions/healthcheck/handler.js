@@ -1,10 +1,12 @@
 'use strict';
 
-const lib = require('../../lib').default;
+import lib from '../../lib';
 
-module.exports.handler = function (event, context, cb) {
+const handler = (event, context, cb) => {
   lib.logger.log('debug', 'In healthcheck handler');
   return cb(null, {
     message: 'Go Serverless! Your Lambda function executed successfully!'
   });
 };
+
+export {handler};

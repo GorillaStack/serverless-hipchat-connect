@@ -1,0 +1,12 @@
+{
+  "dev": {
+    "attribute1": "devValue1",
+    "attribute2": "devValue2"
+  },
+  "beta": {
+    "attribute1": "betaValue1"
+  },
+  "prod": {
+    "attribute1": "prodValue1"
+  }
+}
