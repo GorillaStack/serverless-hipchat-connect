@@ -64,12 +64,30 @@ describe('config.js', () => {
       expect(typeof getApplicationConfiguration).toBe('function');
     });
 
-    it('loads the correct conig for a dev stage', (done) => {
+    it('loads the correct config for a dev stage', (done) => {
       process.env.SERVERLESS_STAGE = 'dev';
       getApplicationConfiguration(TEST_CONFIG_FILE).then((config) => {
         expect(config).not.toBeNull();
         expect(config.attribute1).toEqual('devValue1');
         expect(config.attribute2).toEqual('devValue2');
+        done();
+      }, handleError);
+    });
+
+    it('loads the correct config for a beta stage', (done) => {
+      process.env.SERVERLESS_STAGE = 'beta';
+      getApplicationConfiguration(TEST_CONFIG_FILE).then((config) => {
+        expect(config).not.toBeNull();
+        expect(config.attribute1).toEqual('betaValue1');
+        done();
+      }, handleError);
+    });
+
+    it('loads the correct config for a prod stage', (done) => {
+      process.env.SERVERLESS_STAGE = 'prod';
+      getApplicationConfiguration(TEST_CONFIG_FILE).then((config) => {
+        expect(config).not.toBeNull();
+        expect(config.attribute1).toEqual('prodValue1');
         done();
       }, handleError);
     });
