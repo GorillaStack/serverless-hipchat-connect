@@ -4,7 +4,7 @@
 * The logger module is designed to create a winston logger
 */
 
-import {createLogger} from '../../../restApi/src/logger';
+import { createLogger } from '../../../restApi/src/logger';
 
 describe('logger.js', () => {
   describe('createLogger', () => {
