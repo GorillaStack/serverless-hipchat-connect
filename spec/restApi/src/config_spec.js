@@ -23,15 +23,9 @@ describe('config.js', () => {
 
     let capabiltyDescriptor = null;
 
-    beforeAll((done) => {
-      getCapabilityDescriptor(TEST_CAPABILITY_FILE, config).then((result) => {
-        capabiltyDescriptor = JSON.parse(result);
-        done();
-      }, (err) => {
-        console.log('error');
-        console.log(err);
-        console.log(err.stack);
-      });
+    beforeAll(() => {
+      let result = getCapabilityDescriptor(TEST_CAPABILITY_FILE, config);
+      capabiltyDescriptor = JSON.parse(result);
     });
 
     it('is defined', () => {
@@ -49,13 +43,6 @@ describe('config.js', () => {
   });
 
   describe('getApplicationConfiguration', () => {
-
-    const handleError = (err) => {
-      console.log('error');
-      console.log(err);
-      console.log(err.stack);
-    };
-
     it('is defined', () => {
       expect(getApplicationConfiguration).not.toBeUndefined();
     });
@@ -64,32 +51,26 @@ describe('config.js', () => {
       expect(typeof getApplicationConfiguration).toBe('function');
     });
 
-    it('loads the correct config for a dev stage', (done) => {
+    it('loads the correct config for a dev stage', () => {
       process.env.SERVERLESS_STAGE = 'dev';
-      getApplicationConfiguration(TEST_CONFIG_FILE).then((config) => {
-        expect(config).not.toBeNull();
-        expect(config.attribute1).toEqual('devValue1');
-        expect(config.attribute2).toEqual('devValue2');
-        done();
-      }, handleError);
+      let config = getApplicationConfiguration(TEST_CONFIG_FILE);
+      expect(config).not.toBeNull();
+      expect(config.attribute1).toEqual('devValue1');
+      expect(config.attribute2).toEqual('devValue2');
     });
 
-    it('loads the correct config for a beta stage', (done) => {
+    it('loads the correct config for a beta stage', () => {
       process.env.SERVERLESS_STAGE = 'beta';
-      getApplicationConfiguration(TEST_CONFIG_FILE).then((config) => {
-        expect(config).not.toBeNull();
-        expect(config.attribute1).toEqual('betaValue1');
-        done();
-      }, handleError);
+      let config = getApplicationConfiguration(TEST_CONFIG_FILE);
+      expect(config).not.toBeNull();
+      expect(config.attribute1).toEqual('betaValue1');
     });
 
-    it('loads the correct config for a prod stage', (done) => {
+    it('loads the correct config for a prod stage', () => {
       process.env.SERVERLESS_STAGE = 'prod';
-      getApplicationConfiguration(TEST_CONFIG_FILE).then((config) => {
-        expect(config).not.toBeNull();
-        expect(config.attribute1).toEqual('prodValue1');
-        done();
-      }, handleError);
+      let config = getApplicationConfiguration(TEST_CONFIG_FILE);
+      expect(config).not.toBeNull();
+      expect(config.attribute1).toEqual('prodValue1');
     });
   });
 });

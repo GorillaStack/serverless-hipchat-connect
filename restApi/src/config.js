@@ -11,6 +11,8 @@
 import _ from 'lodash';
 import fs from 'fs';
 
+const FILE_ENCODING = 'utf8';
+
 const substituteConfigInTemplate = (data, config) => {
   return _.template(data)(config);
 };
@@ -29,35 +31,17 @@ const getConfigurationForServerlessStage = (data) => {
 };
 
 const readFile = (file) => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
+  return fs.readFileSync(file, { encoding: FILE_ENCODING });
 };
 
 const getCapabilityDescriptor = (file, config) => {
-  return new Promise((resolve, reject) => {
-    readFile(file).then((data) => {
-      resolve(substituteConfigInTemplate(data.toString(), config));
-    }, (err) => {
-      reject(err);
-    });
-  });
+  let data = readFile(file);
+  return substituteConfigInTemplate(data, config);
 };
 
 const getApplicationConfiguration = (file) => {
-  return new Promise((resolve, reject) => {
-    readFile(file).then((data) => {
-      resolve(getConfigurationForServerlessStage(data.toString()));
-    }, (err) => {
-      reject(err);
-    });
-  });
+  let data = readFile(file);
+  return getConfigurationForServerlessStage(data);
 };
 
 export { getCapabilityDescriptor, getApplicationConfiguration };

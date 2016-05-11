@@ -4,14 +4,18 @@
 * Should export an object with properties and functions
 */
 
+// Required before import
 import getIndex from '../../../restApi/src/index';
-
-const handleError = (err) => {
-  console.log(err);
-  console.log(err.stack);
-};
+let index = null;
 
 describe('index.js', () => {
+  beforeAll(() => {
+    process.env.SERVERLESS_STAGE = 'dev';
+    index = getIndex({
+      configFile: './spec/support/config.json'
+    });
+  });
+
   describe('default export', () => {
     it('is defined', () => {
       expect(getIndex).not.toBeUndefined();
@@ -20,33 +24,15 @@ describe('index.js', () => {
     it('is a function', () => {
       expect(typeof getIndex).toBe('function');
     });
-
-    it('is a function that returns a promise', () => {
-      let result = getIndex();
-      expect(result.then).not.toBeUndefined();
-      expect(typeof result.then).toBe('function');
-    });
   });
 
-  describe('returned index', () => {
-    let result = null;
-    beforeAll((done) => {
-      getIndex().then((res) => {
-        result = res;
-        done();
-      },
-
-      (err) => {
-        handleError(err);
-      });
-    });
-
+  describe('when called returns an index which', () => {
     it('has a logger property', () => {
-      expect(result.logger).not.toBeUndefined();
+      expect(index.logger).not.toBeUndefined();
     });
 
     it('has a config property', () => {
-      expect(result.config).not.toBeUndefined();
+      expect(index.config).not.toBeUndefined();
     });
   });
 });

@@ -7,7 +7,6 @@
 */
 
 // 3rd Party Imports
-import co from 'co';
 
 // Local Imports
 import { createLogger } from './logger';
@@ -17,25 +16,34 @@ import { sendCapabilityDescriptor, getApplicationConfiguration } from './config'
 const CONFIG_FILE_PATH = './config.json';
 const CAPABILITIES_FILE_PATH = './atlassian-connect.json';
 
-/* ----- LOGIC ----- */
+/* ----- MODULE CONSTRUCTOR ----- */
 
-const getIndex = () => {
-  return co(function* () {
-    // Create a logger for our logic
-    const logger = createLogger();
-    logger.log('debug', 'Started Logger');
+/**
+* getIndex
+*
+* @param params - Object - [Optional] - Overrides for getIndex
+* {
+*   configFile: './path',
+*   capabilitiesFile: './path'
+* }
+*/
+const getIndex = (params) => {
+  let options = params || {};
 
-    // Import application configuration
-    logger.log('debug', 'Loading application configuration for stage "%s"', process.env.SERVERLESS_STAGE);
-    const config = yield getApplicationConfiguration(CONFIG_FILE_PATH);
-    logger.log('info', 'Application configuration loaded');
-    logger.log('debug', 'Application configuration:', config);
+  // Create a logger for our logic
+  const logger = createLogger();
+  logger.log('debug', 'Started Logger');
 
-    return {
-      logger: logger,
-      config: config
-    };
-  });
+  // Import application configuration
+  logger.log('debug', 'Loading application configuration for stage "%s"', process.env.SERVERLESS_STAGE);
+  const config = getApplicationConfiguration(options.configFile || CONFIG_FILE_PATH);
+  logger.log('info', 'Application configuration loaded');
+  logger.log('debug', 'Application configuration:', config);
+
+  return {
+    logger: logger,
+    config: config
+  };
 };
 
 export default getIndex;

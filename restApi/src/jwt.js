@@ -11,33 +11,49 @@
 * It extracts the context of the call from the token (room ID, oauth ID) and adds them to a local variable accessible to the rest of the call chain.
 */
 
-export function validateJWT(req, res, next) {
+// Imports
+import jwtUtil from 'jwt-simple';
+
+// Constants
+const QUERY_PARAM_KEY_SIGNED_REQUEST = 'signed_request';
+const HEADER_AUTHORIZATION_LOWER_CASE = 'authorization';
+const HEADER_AUTHORIZATION_CAPITALISED = 'Authorization';
+const ISS = 'iss';
+const ROOM_ID = 'room_id';
+
+const extractEncodedJWTToken = (req) => {
+  return req.query[QUERY_PARAM_KEY_SIGNED_REQUEST]
+    || req.headers[HEADER_AUTHORIZATION_LOWER_CASE].substring(4)
+    || req.headers[HEADER_AUTHORIZATION_CAPITALISED].substring(4);
+};
+
+const validateJWT = (req, installationStore, logger) => {
   try {
-    logger.info('validating JWT');
+    logger.log('info', 'validating JWT');
 
     // Extract the JWT token
-    var encodedJwt = req.query['signed_request']
-      || req.headers['authorization'].substring(4)
-      || req.headers['Authorization'].substring(4);
+    let encodedJwt = extractEncodedJWTToken(req);
 
     // Decode the base64-encoded token, which contains the oauth ID and room ID (to identify the installation)
-    var jwt = jwtUtil.decode(encodedJwt, null, true);
-    var oauthId = jwt['iss'];
-    var roomId = jwt['context']['room_id'];
-    var installation = installationStore[oauthId];
+    let jwt = jwtUtil.decode(encodedJwt, null, true);
+    let oauthId = jwt[ISS];
+    let roomId = jwt.context[ROOM_ID];
+    let installation = installationStore[oauthId];
 
     // Validate the token signature using the installation's OAuth secret sent by HipChat during add-on installation
     // (to ensure the call comes from this HipChat installation)
     jwtUtil.decode(encodedJwt, installation.oauthSecret);
 
-    //all good, it's from HipChat, add the context to a local variable
+    // all good, it's from HipChat, add the context to a local variable
     res.locals.context = { oauthId: oauthId, roomId: roomId };
 
     // Continue with the rest of the call chain
-    logger.info('Valid JWT');
-    next();
+    logger.log('info', 'Invalid JWT');
+
   } catch (err) {
-    logger.info('Invalid JWT');
+    logger.log('info', 'Invalid JWT');
     res.sendStatus(403);
   }
-}
+};
+
+export { validateJWT };
