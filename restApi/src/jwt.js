@@ -27,9 +27,9 @@ const extractEncodedJWTToken = (req) => {
     || req.headers[HEADER_AUTHORIZATION_CAPITALISED].substring(4);
 };
 
-const validateJWT = (req, installationStore, logger) => {
+const validateJWT = (req, lib) => {
   try {
-    logger.log('info', 'validating JWT');
+    lib.logger.log('info', 'validating JWT');
 
     // Extract the JWT token
     let encodedJwt = extractEncodedJWTToken(req);
@@ -38,21 +38,17 @@ const validateJWT = (req, installationStore, logger) => {
     let jwt = jwtUtil.decode(encodedJwt, null, true);
     let oauthId = jwt[ISS];
     let roomId = jwt.context[ROOM_ID];
-    let installation = installationStore[oauthId];
+    let installation = lib.installationStore[oauthId];
 
     // Validate the token signature using the installation's OAuth secret sent by HipChat during add-on installation
     // (to ensure the call comes from this HipChat installation)
     jwtUtil.decode(encodedJwt, installation.oauthSecret);
 
-    // all good, it's from HipChat, add the context to a local variable
-    res.locals.context = { oauthId: oauthId, roomId: roomId };
-
-    // Continue with the rest of the call chain
-    logger.log('info', 'Invalid JWT');
-
+    lib.logger.log('info', 'Valid JWT');
+    return { oauthId: oauthId, roomId: roomId };
   } catch (err) {
-    logger.log('info', 'Invalid JWT');
-    res.sendStatus(403);
+    lib.logger.log('error', 'Invalid JWT');
+    throw new Error('Invalid JWT - call did not come from this HipChat Installation');
   }
 };
 
