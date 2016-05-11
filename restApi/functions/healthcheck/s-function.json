@@ -4,25 +4,11 @@
   "description": "Serverless Lambda function for project: serverless-hipchat-connect",
   "customName": false,
   "customRole": false,
-  "handler": "handler.handler",
+  "handler": "functions/healthcheck/handler.handler",
   "timeout": 6,
   "memorySize": 1024,
   "authorizer": {},
   "custom": {
-    "excludePatterns": [],
-    "optimize": {
-      "exclude": [ "aws-sdk" ],
-      "transforms": [
-        {
-          "name": "babelify",
-          "opts": {
-            "presets": [
-              "es2015"
-            ]
-          }
-        }
-      ]
-    }
   },
   "endpoints": [
     {
