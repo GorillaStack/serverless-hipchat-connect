@@ -43,7 +43,9 @@
   "environment": {
     "SERVERLESS_PROJECT": "${project}",
     "SERVERLESS_STAGE": "${stage}",
-    "SERVERLESS_REGION": "${region}"
+    "SERVERLESS_REGION": "${region}",
+    "INSTALLATION_TABLE": "${installationTableName}",
+    "ACCESS_TOKEN_TABLE": "${accessTokenTableName}"
   },
   "vpc": {
     "securityGroupIds": [],
