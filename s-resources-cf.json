@@ -48,6 +48,49 @@
           }
         ]
       }
+    },
+    "DynamoDBInstallationTable" : {
+      "Type" : "AWS::DynamoDB::Table",
+      "Properties" : {
+        "AttributeDefinitions" : [
+          {
+            "AttributeName": "oauthId",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema" : [
+          {
+            "AttributeName": "oauthId",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput" : {
+           "ReadCapacityUnits" : 3,
+           "WriteCapacityUnits" : 1
+        }
+      }
+    },
+    "DynamoDBAccessTokenTable" : {
+      "Type" : "AWS::DynamoDB::Table",
+      "DependsOn" : "DynamoDBInstallationTable",
+      "Properties" : {
+        "AttributeDefinitions" : [
+          {
+            "AttributeName": "oauthId",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema" : [
+          {
+            "AttributeName": "oauthId",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput" : {
+           "ReadCapacityUnits" : 3,
+           "WriteCapacityUnits" : 1
+        }
+      }
     }
   },
   "Outputs": {
@@ -59,6 +102,14 @@
           "Arn"
         ]
       }
+    },
+    "InstallationTableName": {
+      "Description": "Name of the InstallationTable created by CloudFormation",
+      "Value": { "Ref": "DynamoDBInstallationTable" }
+    },
+    "AccessTokenTableName": {
+      "Description": "Name of the AccessTokenTable created by CloudFormation",
+      "Value": { "Ref": "DynamoDBAccessTokenTable" }
     }
   }
 }
