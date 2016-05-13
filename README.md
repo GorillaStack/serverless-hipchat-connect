@@ -52,3 +52,35 @@ Then, deploy the client assets to s3
 ```bash
 $ sls client deploy
 ```
+
+### Working with DynamoDB Local
+
+When working in development mode, it helps to connect to a local DynamoDB.  Here is a quick setup guide.  More information on the [AWS Blog](https://aws.amazon.com/blogs/aws/dynamodb-local-for-desktop-development/)
+
+1. Download the [DynamoDB Local JAR file](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html)
+1. Start DynamoDB Local using this command: `java – Djava.library.path=. -jar DynamoDBLocal.jar`
+1. Interface with DynamoDB Local via the API or CLI as you normally would, just setting the endpoint to be `http://localhost:8000`
+
+##### Accessing DynamoDB via CLI
+
+The AWS CLI for DynamoDB takes an option `--endpoint`.  By setting this to the DynamoDB Local url, we can target the DynamoDB Local using standard AWS CLI commands.
+
+e.g.
+```bash
+$ aws dynamodb list-tables --endpoint-url http://localhost:8000  
+```
+
+Create Installation and AccessToken tables used in boilerplate
+```bash
+#!/bin/bash
+
+# Create the InstallationTable
+aws dynamodb create-table --table-name InstallationTable --attribute-definitions AttributeName="oauthId",AttributeType="S" --key-schema AttributeName="oauthId",KeyType="HASH" --provisioned-throughput ReadCapacityUnits=3,WriteCapacityUnits=1 --endpoint-url http://localhost:8000
+
+# Create the AccessTokenTable
+aws dynamodb create-table --table-name AccessTokenTable --attribute-definitions AttributeName="oauthId",AttributeType="S" --key-schema AttributeName="oauthId",KeyType="HASH" --provisioned-throughput ReadCapacityUnits=3,WriteCapacityUnits=1 --endpoint-url http://localhost:8000
+```
+
+##### Accessing DynamoDB via API
+
+We handle this logic in the boilerplate already.  When the IS_OFFLINE environment flag is set (which is the case when the Serverless offline plugin is running), if the SERVERLESS_STAGE (i.e. 'dev', 'beta', 'prod', 'v1', etc.) has `dynamoDBLocalURL` and `useDynamoDBLocal` set in configuration, DynamoDB Local will be targeted automatically in the boilerplate code.
