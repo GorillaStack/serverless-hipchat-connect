@@ -11,10 +11,11 @@
 // Local Imports
 import { createLogger } from './logger';
 import { sendCapabilityDescriptor, getApplicationConfiguration } from './config';
+import { getDbManager } from './dynamo_db_manager';
 
-// Constants
-const CONFIG_FILE_PATH = './config.json';
-const CAPABILITIES_FILE_PATH = './atlassian-connect.json';
+// Constants - deal with root_dir difference when working locally/offline
+const CONFIG_FILE_PATH = process.env.IS_OFFLINE ? './restApi/config.json' : './config.json';
+const CAPABILITIES_FILE_PATH = process.env.IS_OFFLINE ? './restApi/config.json' : './atlassian-connect.json';
 
 /* ----- MODULE CONSTRUCTOR ----- */
 
@@ -40,9 +41,14 @@ const getIndex = (params) => {
   logger.log('info', 'Application configuration loaded');
   logger.log('debug', 'Application configuration:', config);
 
+  // Create DynamoDBManager
+  const dbManager = getDbManager(config, logger);
+  logger.log('info', 'DynamoDB Manager loaded');
+
   return {
     logger: logger,
-    config: config
+    config: config,
+    dbManager: dbManager
   };
 };
 
