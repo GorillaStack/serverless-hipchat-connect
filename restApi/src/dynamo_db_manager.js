@@ -60,13 +60,14 @@ const getDbManager = (config, logger) => {
           ExpressionAttributeNames: {
             '#name': keyName
           },
-          ExpressionAttributeNames: {
+          ExpressionAttributeValues: {
             ':value': keyValue
           }
         };
         _this.dynamodb.query(query, (error, data) => {
           if (error) {
-            logger.log('error', 'Error querying DynamoDB:', query);
+            logger.log('error', 'Error querying DynamoDB:', error);
+            logger.log('error', 'Query:', query);
             reject(error);
           } else {
             logger.log('debug', 'Query:', query);
@@ -93,7 +94,8 @@ const getDbManager = (config, logger) => {
         };
         _this.dynamodb.put(modifier, (error, data) => {
           if (error) {
-            logger.log('error', 'Error performing put on DynamoDB:', modifier);
+            logger.log('error', 'Error performing put on DynamoDB:', error);
+            logger.log('error', 'Put modifier:', modifier);
             reject(error);
           } else {
             logger.log('debug', 'Put:', modifier);
@@ -122,7 +124,8 @@ const getDbManager = (config, logger) => {
 
         _this.dynamodb.delete(modifier, (error, data) => {
           if (error) {
-            logger.log('error', 'Error performing delete on DynamoDB:', modifier);
+            logger.log('error', 'Error performing delete on DynamoDB:', error);
+            logger.log('error', 'Delete modifier:', modifier);
             reject(error);
           } else {
             logger.log('debug', 'Delete:', modifier);
