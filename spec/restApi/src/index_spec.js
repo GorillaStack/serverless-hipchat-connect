@@ -34,5 +34,9 @@ describe('index.js', () => {
     it('has a config property', () => {
       expect(index.config).not.toBeUndefined();
     });
+
+    it('has a dbManager property', () => {
+      expect(index.dbManager).not.toBeUndefined();
+    });
   });
 });
