@@ -42,7 +42,8 @@ const getDbManager = (config, logger) => {
 
   return {
     dynamodb: new AWS.DynamoDB.DocumentClient({
-      service: serviceInterfaceObject
+      service: serviceInterfaceObject,
+      region: process.env[SERVERLESS_REGION_ENV_VAR]
     }),
 
     /**
