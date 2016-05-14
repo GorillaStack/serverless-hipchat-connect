@@ -71,14 +71,15 @@ $ aws dynamodb list-tables --endpoint-url http://localhost:8000
 ```
 
 Create Installation and AccessToken tables used in boilerplate
+*NB:* DynamoDB Local is region sensitive!  Be sure to create tables locally in whatever region your code thinks it will be in (set in process.env.SERVERLESS_REGION in your code).
 ```bash
 #!/bin/bash
 
 # Create the InstallationTable
-aws dynamodb create-table --table-name InstallationTable --attribute-definitions AttributeName="oauthId",AttributeType="S" --key-schema AttributeName="oauthId",KeyType="HASH" --provisioned-throughput ReadCapacityUnits=3,WriteCapacityUnits=1 --endpoint-url http://localhost:8000
+aws dynamodb create-table --table-name InstallationTable --attribute-definitions AttributeName="oauthId",AttributeType="S" --key-schema AttributeName="oauthId",KeyType="HASH" --provisioned-throughput ReadCapacityUnits=3,WriteCapacityUnits=1 --region <your-region> --endpoint-url http://localhost:8000
 
 # Create the AccessTokenTable
-aws dynamodb create-table --table-name AccessTokenTable --attribute-definitions AttributeName="oauthId",AttributeType="S" --key-schema AttributeName="oauthId",KeyType="HASH" --provisioned-throughput ReadCapacityUnits=3,WriteCapacityUnits=1 --endpoint-url http://localhost:8000
+aws dynamodb create-table --table-name AccessTokenTable --attribute-definitions AttributeName="oauthId",AttributeType="S" --key-schema AttributeName="oauthId",KeyType="HASH" --provisioned-throughput ReadCapacityUnits=3,WriteCapacityUnits=1 --region <your-region> --endpoint-url http://localhost:8000
 ```
 
 ##### Accessing DynamoDB via API
