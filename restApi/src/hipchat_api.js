@@ -126,6 +126,64 @@ class HipChatAPI {
       }
     });
   }
+
+  /**
+  * Sending messages to HipChat rooms
+  * ---------------------------------
+  * You send messages to HipChat rooms via a REST call to the room notification endpoint
+  * HipChat supports various formats for messages, and here are a few examples:
+  */
+
+  sendMessage(oauthId, roomId, message) {
+    let _this = this;
+    return co(function* () {
+      let installation = yield getInstallation(oauthId);
+      let notificationUrl = installation.apiUrl + 'room/' + roomId + '/notification';
+      let accessToken = yield getAccessToken(oauthId);
+      return new Promise((resolve, reject) => {
+        request.post(notificationUrl, {
+          auth: {
+            bearer: accessToken['access_token']
+          },
+          json: message
+        }, (err, response, body) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(response);
+          }
+        });
+      });
+    });
+  }
+
+  sendHtmlMessage(oauthId, roomId, text) {
+    let message = {
+      color: 'gray',
+      message: text,
+      message_format: 'html'
+    };
+    return sendMessage(oauthId, roomId, message);
+  }
+
+  sendSampleCardMessage(oauthId, roomId, description) {
+    let message = {
+      color: 'gray',
+      message: 'this is a backup message for HipChat clients that do not understand cards (old HipChat clients, 3rd party XMPP clients)',
+      message_format: 'text',
+      card: {
+        style: 'application',
+        id: 'some_id',
+        url: 'http://www.stuff.com',
+        title: 'Such awesome. Very API. Wow!',
+        description: description,
+        thumbnail: {
+          url: 'http://i.ytimg.com/vi/8M7Qie4Aowk/hqdefault.jpg'
+        }
+      }
+    };
+    return sendMessage(oauthId, roomId, message);
+  }
 }
 
 const firstItemOrUndefined = (data) => {
