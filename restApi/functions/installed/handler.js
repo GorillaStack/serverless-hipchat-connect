@@ -9,7 +9,10 @@ exports.handler = function (event, context, cb) {
 
   let hipchat = new HipChatAPI(lib.dbManager);
 
-  return hipchat.setInstallation(event.body).then(
+  return hipchat.saveInstallation(event.body).then(
     (data) => cb(null, data),
-    (error) => cb(error));
+    (error) => {
+      lib.logger.log('error', 'Could not save installation', error);
+      cb(error);
+    });
 };

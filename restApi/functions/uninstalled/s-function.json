@@ -21,15 +21,17 @@
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
-        "application/json": ""
+        "application/json": "{ \"body\" : \"$input.json('$')\", \"params\" : \"$input.params().querystring\" }"
       },
       "responses": {
         "400": {
           "statusCode": "400"
         },
         "default": {
-          "statusCode": "200",
-          "responseParameters": {},
+          "statusCode": "302",
+          "responseParameters": {
+            "method.response.header.Location": "integration.response.body.location"
+          },
           "responseModels": {
             "application/json;charset=UTF-8": "Empty"
           },
