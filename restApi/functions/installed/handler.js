@@ -1,7 +1,15 @@
 'use strict';
 
-module.exports.handler = function(event, context, cb) {
-  return cb(null, {
-    message: 'Go Serverless! Your Lambda function executed successfully!'
-  });
+const lib = require('../../lib/index').default();
+const HipChatAPI = require('../../lib/hipchat_api').HipChatAPI;
+
+exports.handler = function (event, context, cb) {
+  lib.logger.log('debug', 'In /installed handler');
+  lib.logger.log('debug', 'Event json:', JSON.stringify(event));
+
+  let hipchat = new HipChatAPI(lib.dbManager);
+
+  return hipchat.setInstallation(event.body).then(
+    (data) => cb(null, data),
+    (error) => cb(error));
 };

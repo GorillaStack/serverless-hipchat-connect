@@ -16,7 +16,7 @@ const OAUTH_ID_ATTRIBUTE_NAME = 'oauthId';
 
 /* ------ LOGIC ------ */
 
-class HipChatAPI {
+const HipChatAPI = class {
   constructor(dbManager) {
     this.dbManager = dbManager;
   }
@@ -33,6 +33,7 @@ class HipChatAPI {
   * @return {Promise} - resolves to a token
   */
   refreshAccessToken(installation) {
+    let _this = this;
     let params = this.getRefreshAccessTokenParams(installation);
 
     return new Promise((resolve, reject) => {
@@ -41,7 +42,7 @@ class HipChatAPI {
           reject(err);
         } else {
           let accessToken = JSON.parse(body);
-          this.setAccessTokenInStore({
+          _this.setAccessTokenInStore({
             // Add a minute of leeway
             oauthId: installation.oauthId,
             expirationTimeStamp: Date.now() + ((accessToken['expires_in'] - 60) * 1000),
@@ -63,8 +64,9 @@ class HipChatAPI {
   }
 
   setAccessTokenInStore(item) {
+    let _this = this;
     return new Promise((resolve, reject) => {
-      this.dbManager.put(process.env.ACCESS_TOKEN_TABLE, item).then(
+      _this.dbManager.put(process.env.ACCESS_TOKEN_TABLE, item).then(
         (data) => resolve(true),
         (error) => reject(error)
       );
@@ -74,10 +76,37 @@ class HipChatAPI {
   getInstallation(oauthId) {
     let _this = this;
     return new Promise((resolve, reject) => {
-      this.dbManager.query(process.env.INSTALLATION_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId).then(
+      _this.dbManager.query(process.env.INSTALLATION_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId).then(
         (data) => resolve(firstItemOrUndefined(data)),
         (error) => reject(error)
       );
+    });
+  }
+
+  /**
+  * setInstallation
+  *
+  * Queries the HipChatAPI to get token url and api url, then saves the installation
+  * in our installation store
+  */
+  setInstallation(installation) {
+    let _this = this;
+    return new Promise((resolve, reject) => {
+      request.get(installation.capabilitiesUrl, function (err, response, body) {
+        if (err) {
+          reject(err);
+        } else {
+          let capabilities = JSON.parse(body);
+          // Save the token endpoint URL along with the client credentials
+          installation.tokenUrl = capabilities['capabilities']['oauth2Provider']['tokenUrl'];
+          // Save the API endpoint URL along with the client credentials
+          installation.apiUrl = capabilities['capabilities']['hipchatApiProvider']['url'];
+          _this.dbManager.put(process.env.INSTALLATION_TABLE, installation).then(
+            (data) => resolve(data),
+            (error) => reject(error));
+        }
+      });
+
     });
   }
 
@@ -193,4 +222,4 @@ const firstItemOrUndefined = (data) => {
   }
 };
 
-export { HipchatAPI };
+export { HipChatAPI };

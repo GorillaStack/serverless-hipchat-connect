@@ -1,8 +1,8 @@
 {
   "dev": {
     "logLevel": "debug",
-    "host": "http://56630844.ngrok.io",
-    "staticAssetsHost": "http://56630844.ngrok.io",
+    "host": "http://d6513fa2.ngrok.io",
+    "staticAssetsHost": "http://d6513fa2.ngrok.io",
     "useDynamoDBLocal": true,
     "dynamoDBLocalURL": "http://localhost:8000",
     "maxJWTTokenAge": 86400
