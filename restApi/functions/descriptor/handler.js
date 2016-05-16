@@ -1,7 +1,14 @@
 'use strict';
 
-module.exports.handler = function(event, context, cb) {
-  return cb(null, {
-    message: 'Go Serverless! Your Lambda function executed successfully!'
-  });
+const lib = require('../../lib/index').default();
+
+exports.handler = function (event, context, cb) {
+  try {
+    lib.logger.log('debug', 'In /descriptor handler');
+    let capabilitiesDescriptor = lib.getCapabilities();
+    lib.logger.log('debug', 'Retrieved capabilitiesDescriptor');
+    return cb(null, capabilitiesDescriptor);
+  } catch (err) {
+    return cb(err);
+  }
 };
