@@ -8,6 +8,7 @@
 */
 
 // 3rd party dependencies
+import 'babel-polyfill';
 import co from 'co';
 import request from 'request';
 
@@ -64,16 +65,14 @@ const HipChatAPI = class {
   }
 
   setAccessTokenInStore(item) {
-    let _this = this;
-    return new Promise((resolve, reject) => {
-      _this.dbManager.put(process.env.ACCESS_TOKEN_TABLE, item).then(
-        (data) => resolve(true),
-        (error) => reject(error)
-      );
-    });
+    return this.dbManager.put(process.env.ACCESS_TOKEN_TABLE, item);
   }
 
-  getInstallation(oauthId) {
+  deleteAccessTokenFromStore(oauthId) {
+    return this.dbManager.delete(process.env.ACCESS_TOKEN_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId);
+  }
+
+  getInstallationFromStore(oauthId) {
     let _this = this;
     return new Promise((resolve, reject) => {
       _this.dbManager.query(process.env.INSTALLATION_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId).then(
@@ -83,13 +82,21 @@ const HipChatAPI = class {
     });
   }
 
+  setInstallationInStore(item) {
+    return this.dbManager.put(process.env.INSTALLATION_TABLE, item);
+  }
+
+  deleteInstallationFromStore(oauthId) {
+    return this.dbManager.delete(process.env.INSTALLATION_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId);
+  }
+
   /**
-  * setInstallation
+  * saveInstallation
   *
   * Queries the HipChatAPI to get token url and api url, then saves the installation
   * in our installation store
   */
-  setInstallation(installation) {
+  saveInstallation(installation) {
     let _this = this;
     return new Promise((resolve, reject) => {
       request.get(installation.capabilitiesUrl, function (err, response, body) {
@@ -101,12 +108,30 @@ const HipChatAPI = class {
           installation.tokenUrl = capabilities['capabilities']['oauth2Provider']['tokenUrl'];
           // Save the API endpoint URL along with the client credentials
           installation.apiUrl = capabilities['capabilities']['hipchatApiProvider']['url'];
-          _this.dbManager.put(process.env.INSTALLATION_TABLE, installation).then(
+          _this.setInstallationInStore(installation).then(
             (data) => resolve(data),
             (error) => reject(error));
         }
       });
 
+    });
+  }
+
+  removeInstallation(installationUrl) {
+    let _this = this;
+    return co(function* () {
+      let installation = yield new Promise((resolve, reject) => {
+        request.get(installationUrl, function (err, response, body) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(JSON.parse(body));
+          }
+        });
+      });
+
+      yield _this.deleteAccessTokenFromStore(installation.oauthId);
+      yield _this.deleteInstallationFromStore(installation.oauthId);
     });
   }
 
@@ -144,7 +169,7 @@ const HipChatAPI = class {
     return co(function* () {
       let accessToken = yield _this.getAccessTokenFromStore(oauthId);
       if (!accessToken || _this.isExpired(accessToken)) {
-        let installation = yield _this.getInstallation(oauthId);
+        let installation = yield _this.getInstallationFromStore(oauthId);
         return yield _this.refreshAccessToken(installation);
       } else {
         return new Promise((resolve, reject) => {
@@ -166,7 +191,7 @@ const HipChatAPI = class {
   sendMessage(oauthId, roomId, message) {
     let _this = this;
     return co(function* () {
-      let installation = yield getInstallation(oauthId);
+      let installation = yield getInstallationFromStore(oauthId);
       let notificationUrl = installation.apiUrl + 'room/' + roomId + '/notification';
       let accessToken = yield getAccessToken(oauthId);
       return new Promise((resolve, reject) => {
