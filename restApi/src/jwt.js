@@ -20,36 +20,52 @@ const HEADER_AUTHORIZATION_LOWER_CASE = 'authorization';
 const HEADER_AUTHORIZATION_CAPITALISED = 'Authorization';
 const ISS = 'iss';
 const ROOM_ID = 'room_id';
+const OAUTH_ID_ATTRIBUTE_NAME = 'oauthId';
+
+const jwtSubstringIfPresent = (headers, headerKey) => {
+  let value = headers[headerKey];
+  return value ? value.substring(4) : undefined;
+};
 
 const extractEncodedJWTToken = (req) => {
   return req.query[QUERY_PARAM_KEY_SIGNED_REQUEST]
-    || req.headers[HEADER_AUTHORIZATION_LOWER_CASE].substring(4)
-    || req.headers[HEADER_AUTHORIZATION_CAPITALISED].substring(4);
+    || jwtSubstringIfPresent(req.headers, HEADER_AUTHORIZATION_LOWER_CASE)
+    || jwtSubstringIfPresent(req.headers, HEADER_AUTHORIZATION_CAPITALISED);
+};
+
+const getInstallationFromStore = (lib, oauthId) => {
+  return lib.dbManager.query(process.env.INSTALLATION_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId);
 };
 
 const validateJWT = (req, lib) => {
-  try {
-    lib.logger.log('info', 'validating JWT');
+  return new Promise((resolve, reject) => {
+    try {
+      // Extract the JWT token
+      let encodedJwt = extractEncodedJWTToken(req);
 
-    // Extract the JWT token
-    let encodedJwt = extractEncodedJWTToken(req);
+      // Decode the base64-encoded token, which contains the oauth ID and room ID (to identify the installation)
+      let jwt = jwtUtil.decode(encodedJwt, null, true);
+      let oauthId = jwt[ISS];
+      let roomId = jwt.context[ROOM_ID];
 
-    // Decode the base64-encoded token, which contains the oauth ID and room ID (to identify the installation)
-    let jwt = jwtUtil.decode(encodedJwt, null, true);
-    let oauthId = jwt[ISS];
-    let roomId = jwt.context[ROOM_ID];
-    let installation = lib.installationStore[oauthId];
+      getInstallationFromStore(lib, oauthId).then(
+        (installations) => {
+          // Validate the token signature using the installation's OAuth secret sent by HipChat during add-on installation
+          // (to ensure the call comes from this HipChat installation)
+          jwtUtil.decode(encodedJwt, installations.Items[0].oauthSecret);
 
-    // Validate the token signature using the installation's OAuth secret sent by HipChat during add-on installation
-    // (to ensure the call comes from this HipChat installation)
-    jwtUtil.decode(encodedJwt, installation.oauthSecret);
+          lib.logger.log('debug', 'Valid JWT');
+          resolve({ oauthId: oauthId, roomId: roomId });
+        },
 
-    lib.logger.log('info', 'Valid JWT');
-    return { oauthId: oauthId, roomId: roomId };
-  } catch (err) {
-    lib.logger.log('error', 'Invalid JWT');
-    throw new Error('Invalid JWT - call did not come from this HipChat Installation');
-  }
+        (error) => reject(error)
+      );
+
+    } catch (err) {
+      lib.logger.log('error', 'Invalid JWT', err);
+      reject(new Error('Invalid JWT - call did not come from this HipChat Installation'));
+    }
+  });
 };
 
 export { validateJWT };
