@@ -7,7 +7,7 @@ exports.handler = function (event, context, cb) {
     lib.logger.log('debug', 'In /descriptor handler');
     let capabilitiesDescriptor = lib.getCapabilities();
     lib.logger.log('debug', 'Retrieved capabilitiesDescriptor');
-    return cb(null, capabilitiesDescriptor);
+    return cb(null, JSON.parse(capabilitiesDescriptor));
   } catch (err) {
     return cb(err);
   }
