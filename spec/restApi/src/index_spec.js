@@ -38,5 +38,10 @@ describe('index.js', () => {
     it('has a dbManager property', () => {
       expect(index.dbManager).not.toBeUndefined();
     });
+
+    it('has a function "getCapabilities"', () => {
+      expect(index.getCapabilities).not.toBeUndefined();
+      expect(typeof index.getCapabilities).toBe('function');
+    });
   });
 });
