@@ -53,7 +53,7 @@
           "value": "Hello Sidebar!"
         },
         "location": "hipchat.sidebar.right",
-        "url": "${host}/sidebar"
+        "url": "${staticAssetsHost}/sidebar"
       }
     ],
     "dialog": [

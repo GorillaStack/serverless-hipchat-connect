@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+    <title>Sample add-on</title>
+  <!--The Atlassian User Interface library, to style your add-on so it's consistent with HipChat-->
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.9.5/css/aui.css" media="all">
+  <!--jQuery (optional)-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <!--The cross domain messaging library, you need to import that to be able to use the HipChat Javascript API-->
+  <script src="https://www.hipchat.com/atlassian-connect/all.js"></script>
+</head>
+<body>
+
+  <section id="content" role="main" class="ac-content">
+  <div></div>
+     <div class="aui-message">
+       <p class="title">
+           <strong>Welcome to the future of Chat!</strong>
+       </p>
+       <p>This is a HipChat Sidebar View. From here, you can interact with your add-on back-end, and the HipChat App.</p>
+    </div>
+  <h3>What you can do from here</h3>
+  <form action="#" method="post" id="d" class="aui">
+      <fieldset>
+          <div class="field-group">
+              <label for="populateChatInput">Chat input</label>
+              <button class="aui-button" id="populateChatInput" >Add text to input</button>
+              <div class="description">Then check out where you type messages</div>
+          </div>
+          <div class="field-group">
+              <label for="sendCard">Cards</label>
+              <button class="aui-button" id="sendCard" >Send a Card</button>
+              <div class="description">They are fancy HipChat messages</div>
+          </div>
+          <div class="field-group">
+              <label for="updateGlance">Glance</label>
+              <button class="aui-button" id="updateGlance" >Update the Glance</button>
+              <div class="description">Then check above this iframe ^^</div>
+          </div>
+          <div class="field-group">
+              <label for="openDialog">Dialogs</label>
+              <button class="aui-button" id="openDialog" >Open a Dialog</button>
+          </div>
+      <!-- if the sidebar was opened from a message action, the message is displayed there -->
+      <div class="field-group">
+        <label for="msg">Message</label>
+        <textarea class="textarea" name="msg" id="msg" rows="6"
+                          placeholder="Click on ... next to a message > Sample action"></textarea>
+      </div>
+    </fieldset>
+  </form>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#populateChatInput').click(function () {
+        HipChat.chat.appendMessage('Hello world!');
+      });
+
+      $('#openDialog').click(function () {
+        HipChat.dialog.open({
+          key: 'sample-dialog'
+        });
+      });
+
+      $('#sendCard').click(function () {
+        //This will request a JWT token from the HipChat client, signed with the installation shared secret,
+        //which you use to secure the REST call
+        HipChat.auth.withToken(function (err, token) {
+          //then, make a REST call to the add-on backend, including the JWT token
+          $.ajax({
+            type: 'POST',
+            url: '/post-card',
+            headers: { authorization: 'JWT ' + token },
+            data: { cardDescription: 'This card was posted from the Sidebar\nPretty cool hey!' },
+            dataType: 'json',
+            error: function (jqXHR, status) {
+              alert('fail' + status.code);
+            }
+          });
+        });
+      });
+
+      $('#updateGlance').click(function () {
+        HipChat.auth.withToken(function (err, token) {
+          $.ajax({
+            type: 'POST',
+            url: '/update-glance',
+            headers: { authorization: 'JWT ' + token },
+            data: { glanceText: 'Glance updated from Sidebar' },
+            dataType: 'json',
+            error: function (jqXHR, status) {
+              alert('fail' + status.code);
+            }
+          });
+        });
+      });
+
+      //Handle the message action "sample-message-action" declared in the descriptor
+      HipChat.register({
+        'sample-message-action': function (message) {
+          $('#msg').text(JSON.stringify(message));
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
