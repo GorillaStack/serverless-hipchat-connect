@@ -27,7 +27,7 @@
     },
     "webhook": {
       "url": "${host}/echo",
-      "pattern": ".*",
+      "pattern": "^/echo",
       "event": "room_message",
       "name": "Echo",
       "authentication": "jwt"
