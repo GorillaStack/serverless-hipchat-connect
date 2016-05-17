@@ -1,15 +1,62 @@
-module.exports = function(grunt) {
+'use strict';
 
+// Includes
+const fs = require('fs');
+const _ = require('lodash');
+
+// Constants
+const CONFIG_FILE = './restApi/config.json';
+const FILE_ENCODING = 'utf8';
+
+const substituteConfigInTemplate = (data, env) => {
+  let config = getEnvironmentConfig(env);
+  return _.template(data)(config);
+};
+
+const getEnvironmentConfig = (env) => {
+  let data = fs.readFileSync(CONFIG_FILE, { encoding: FILE_ENCODING });
+  let jsonData = JSON.parse(data);
+  return jsonData[env];
+};
+
+module.exports = function (grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     copy: {
-      main: {
+      dev: {
         expand: true,
         cwd: 'client/src/',
         src: '**',
-        dest: 'client/dist/'
+        dest: 'client/dist/',
+        options: {
+          process: function (content, srcpath) {
+            return substituteConfigInTemplate(content, 'dev');
+          }
+        }
       },
+      beta: {
+        expand: true,
+        cwd: 'client/src/',
+        src: '**',
+        dest: 'client/dist/',
+        options: {
+          process: function (content, srcpath) {
+            return substituteConfigInTemplate(content, 'beta');
+          }
+        }
+      },
+      prod: {
+        expand: true,
+        cwd: 'client/src/',
+        src: '**',
+        dest: 'client/dist/',
+        options: {
+          process: function (content, srcpath) {
+            return substituteConfigInTemplate(content, 'prod');
+          }
+        }
+      }
     },
     run: {
       babel: {
