@@ -23,7 +23,7 @@
       "uninstalledUrl": "${host}/uninstalled"
     },
     "configurable": {
-      "url": "${host}/configure"
+      "url": "${staticAssetsHost}/configure.html"
     },
     "webhook": {
       "url": "${host}/echo",
