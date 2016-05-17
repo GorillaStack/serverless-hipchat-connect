@@ -2,7 +2,7 @@
   "dev": {
     "logLevel": "debug",
     "host": "http://d6513fa2.ngrok.io",
-    "staticAssetsHost": "http://d6513fa2.ngrok.io",
+    "staticAssetsHost": "https://s3-ap-northeast-1.amazonaws.com/serverless-hipchat-connect-client.dev.ap-northeast-1",
     "useDynamoDBLocal": true,
     "dynamoDBLocalURL": "http://localhost:8000",
     "maxJWTTokenAge": 86400

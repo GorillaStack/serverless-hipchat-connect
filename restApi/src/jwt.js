@@ -7,8 +7,7 @@
 * This token is signed, and you should validate the signature, which guarantees that the call really comes from HipChat.
 * You validate the signature using the shared secret sent to your add-on at installation.
 *
-* It is implemented as an Express middleware function which will be executed in the call chain for every request the add-on receives from HipChat
-* It extracts the context of the call from the token (room ID, oauth ID) and adds them to a local variable accessible to the rest of the call chain.
+* @return Promise that resolves to the context of the call from the token {oauth ID, room ID}
 */
 
 // Imports
