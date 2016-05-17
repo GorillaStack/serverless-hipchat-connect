@@ -19,7 +19,7 @@ Component | Purpose | Description
 1. Deploy into a new AWS account `sls project init`
 1. Deploy resources (IAM roles etc) `sls resources deploy`
 1. Deploy endpoints and lambdas `sls dash deploy`
-1. Deploy client-side resources `grunt copy && sls client deploy` (see note below)
+1. Deploy client-side resources for your environment `grunt copy:dev && sls client deploy` (see note below)
 1. Get function logs `sls function logs restApi/example/healthcheck`
 1. Run locally:
 
@@ -29,6 +29,8 @@ Component | Purpose | Description
 ### Client assets to s3
 
 Client assets are copied to the s3 bucket defined in `s-project.json` by the [serverless-client-s3 plugin](https://github.com/serverless/serverless-client-s3).
+
+We also support the substitution of config values from your environment specific configuration within `config.json`.  `grunt copy:prod` for example will substitute configuration values from the production subdocument of the config document.
 
 ```json
 "custom": {
