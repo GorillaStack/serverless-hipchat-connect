@@ -10,6 +10,9 @@ This is a repository originally written by [GorillaStack](www.gorillastack.com) 
 Component | Purpose | Description
 ----------|---------|------------
 [serverless](https://github.com/serverless/serverless) | Application hosting | Framework for deploying lambda, API Gateway and other components to AWS
+[serverless-offline](https://github.com/dherault/serverless-offline) | Local testing | A Serverless plugin that emulates lambda and api gateway on your local machine to speed up development cycles
+[serverless-client](https://github.com/serverless/serverless-client-s3) | Deploy static files to s3 | A Serverless plugin that deploys static files to s3
+[DynamoDBLocal](#working-with-dynamodb-local) | Local DB | A local emulation of DynamoDB, to speed up development cycles
 [Winston](https://www.npmjs.com/package/winston) | Logging | Good logging solution with a variety of [transports](https://github.com/winstonjs/winston/blob/master/docs/transports.md) including AWS SNS, Email, MongoDB, Console, File etc.
 
 
@@ -30,7 +33,7 @@ Component | Purpose | Description
 
 Client assets are copied to the s3 bucket defined in `s-project.json` by the [serverless-client-s3 plugin](https://github.com/serverless/serverless-client-s3).
 
-We also support the substitution of config values from your environment specific configuration within `config.json`.  `grunt copy:prod` for example will substitute configuration values from the production subdocument of the config document.
+We also support the substitution of config values from your environment specific configuration within `config.json`.  `grunt copy:prod` for example will substitute configuration values from the 'prod' subdocument of the config document.
 
 ```json
 "custom": {
