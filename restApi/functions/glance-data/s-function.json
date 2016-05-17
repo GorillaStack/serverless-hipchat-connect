@@ -21,7 +21,7 @@
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
-        "application/json": ""
+        "application/json": "$${apiGatewayTemplate}"
       },
       "responses": {
         "400": {
@@ -29,7 +29,9 @@
         },
         "default": {
           "statusCode": "200",
-          "responseParameters": {},
+          "responseParameters": {
+            "method.response.header.Access-Control-Allow-Origin": "*"
+          },
           "responseModels": {
             "application/json;charset=UTF-8": "Empty"
           },
