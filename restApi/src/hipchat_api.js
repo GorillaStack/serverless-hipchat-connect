@@ -18,8 +18,9 @@ const OAUTH_ID_ATTRIBUTE_NAME = 'oauthId';
 /* ------ LOGIC ------ */
 
 const HipChatAPI = class {
-  constructor(dbManager) {
+  constructor(dbManager, logger) {
     this.dbManager = dbManager;
+    this.logger = logger;
   }
 
   isExpired(accessToken) {
@@ -58,7 +59,7 @@ const HipChatAPI = class {
     let _this = this;
     return new Promise((resolve, reject) => {
       _this.dbManager.query(process.env.ACCESS_TOKEN_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId).then(
-        (data) => resolve(firstItemOrUndefined(data)),
+        (data) => resolve(firstItemOrUndefined(data, 'token')),
         (error) => reject(error)
       );
     });
@@ -174,7 +175,7 @@ const HipChatAPI = class {
       } else {
         return new Promise((resolve, reject) => {
           process.nextTick(() => {
-            resolve(accessToken.token);
+            resolve(accessToken);
           });
         });
       }
@@ -191,9 +192,10 @@ const HipChatAPI = class {
   sendMessage(oauthId, roomId, message) {
     let _this = this;
     return co(function* () {
-      let installation = yield getInstallationFromStore(oauthId);
+      let installation = yield _this.getInstallationFromStore(oauthId);
       let notificationUrl = installation.apiUrl + 'room/' + roomId + '/notification';
-      let accessToken = yield getAccessToken(oauthId);
+      let accessToken = yield _this.getAccessToken(oauthId);
+      _this.logger.log('debug', 'Attempting to send message', { notificationUrl: notificationUrl, message: message });
       return new Promise((resolve, reject) => {
         request.post(notificationUrl, {
           auth: {
@@ -202,8 +204,10 @@ const HipChatAPI = class {
           json: message
         }, (err, response, body) => {
           if (err) {
+            _this.logger.log('error', 'Could not send message', err);
             reject(err);
           } else {
+            _this.logger.log('debug', 'successfully sent meesage');
             resolve(response);
           }
         });
@@ -217,7 +221,7 @@ const HipChatAPI = class {
       message: text,
       message_format: 'html'
     };
-    return sendMessage(oauthId, roomId, message);
+    return this.sendMessage(oauthId, roomId, message);
   }
 
   sendSampleCardMessage(oauthId, roomId, description) {
@@ -236,14 +240,14 @@ const HipChatAPI = class {
         }
       }
     };
-    return sendMessage(oauthId, roomId, message);
+    return this.sendMessage(oauthId, roomId, message);
   }
-}
+};
 
-const firstItemOrUndefined = (data) => {
-  if (data.count > 0) {
-    console.log(data.Items);
-    return data.Items[0].token;
+const firstItemOrUndefined = (data, pluckValue) => {
+  if (data.Count > 0) {
+    let item = data.Items[0];
+    return pluckValue ? item[pluckValue] : item;
   }
 };
 
