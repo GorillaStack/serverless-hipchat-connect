@@ -14,21 +14,21 @@
   "endpoints": [
     {
       "path": "echo",
-      "method": "GET",
+      "method": "POST",
       "type": "AWS",
       "authorizationType": "none",
       "authorizerFunction": false,
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
-        "application/json": ""
+        "application/json": "$${apiGatewayTemplate}"
       },
       "responses": {
         "400": {
           "statusCode": "400"
         },
         "default": {
-          "statusCode": "200",
+          "statusCode": "204",
           "responseParameters": {},
           "responseModels": {
             "application/json;charset=UTF-8": "Empty"
