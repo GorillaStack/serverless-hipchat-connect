@@ -74,7 +74,7 @@ The AWS CLI for DynamoDB takes an option `--endpoint`.  By setting this to the D
 
 e.g.
 ```bash
-$ aws dynamodb list-tables --endpoint-url http://localhost:8000  
+$ aws dynamodb list-tables --endpoint-url http://localhost:8000 --region <your-region>
 ```
 
 Create Installation and AccessToken tables used in boilerplate
