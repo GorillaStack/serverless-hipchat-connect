@@ -65,7 +65,7 @@ $ sls client deploy
 When working in development mode, it helps to connect to a local DynamoDB.  Here is a quick setup guide.  More information on the [AWS Blog](https://aws.amazon.com/blogs/aws/dynamodb-local-for-desktop-development/)
 
 1. Download the [DynamoDB Local JAR file](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html)
-1. Start DynamoDB Local using this command: `java – Djava.library.path=. -jar DynamoDBLocal.jar`
+1. Start DynamoDB Local using this command: `java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar`
 1. Interface with DynamoDB Local via the API or CLI as you normally would, just setting the endpoint to be `http://localhost:8000`
 
 ##### Accessing DynamoDB via CLI
