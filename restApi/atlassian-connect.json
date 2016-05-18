@@ -7,8 +7,8 @@
     "url": "http://www.gorillastack.com"
   },
   "links": {
-    "self": "${host}/atlassian-connect.json",
-    "homepage": "${host}"
+    "self": "${host}/descriptor",
+    "homepage": "${staticAssetsHost}/index.html"
   },
   "capabilities": {
     "hipchatApiConsumer": {
@@ -62,7 +62,7 @@
         "title": {
           "value": "Hello Dialog!"
         },
-        "url": "${host}/dialog",
+        "url": "${staticAssetsHost}/dialog.html",
         "options": {
           "style": "normal",
           "primaryAction": {
