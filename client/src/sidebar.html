@@ -20,7 +20,7 @@
        <p>This is a HipChat Sidebar View. From here, you can interact with your add-on back-end, and the HipChat App.</p>
     </div>
   <h3>What you can do from here</h3>
-  <form action="#" method="post" id="d" class="aui">
+  <form action="#" method="" id="d" class="aui">
       <fieldset>
           <div class="field-group">
               <label for="populateChatInput">Chat input</label>
@@ -69,7 +69,7 @@
           //then, make a REST call to the add-on backend, including the JWT token
           $.ajax({
             type: 'POST',
-            url: '/post-card',
+            url: '${host}/post-card',
             headers: { authorization: 'JWT ' + token },
             data: { cardDescription: 'This card was posted from the Sidebar\nPretty cool hey!' },
             dataType: 'json',
@@ -84,7 +84,7 @@
         HipChat.auth.withToken(function (err, token) {
           $.ajax({
             type: 'POST',
-            url: '/update-glance',
+            url: '${host}/update-glance',
             headers: { authorization: 'JWT ' + token },
             data: { glanceText: 'Glance updated from Sidebar' },
             dataType: 'json',
