@@ -242,6 +242,44 @@ const HipChatAPI = class {
     };
     return this.sendMessage(oauthId, roomId, message);
   }
+
+  /**
+  * updateGlanceData
+  *
+  * Update a glance within a HipChat room
+  */
+  updateGlanceData(oauthId, roomId, glanceKey, glanceData) {
+    let _this = this;
+    this.logger.log('debug', 'in updateGlanceData');
+    return co(function* () {
+      let installation = yield _this.getInstallationFromStore(oauthId);
+      _this.logger.log('debug', 'got installation from store');
+      let roomGlanceUpdateUrl = installation.apiUrl + 'addon/ui/room/' + roomId;
+      let accessToken = yield _this.getAccessToken(oauthId);
+      _this.logger.log('debug', 'got accessToken trying to update');
+      return yield new Promise((resolve, reject) => {
+        request.post(roomGlanceUpdateUrl, {
+          auth: {
+            bearer: accessToken['access_token']
+          },
+          json: {
+            glance: [{
+              key: glanceKey,
+              content: glanceData
+            }]
+          }
+        }, function (err, response, body) {
+          if (err) {
+            _this.logger.log('error', 'Could not update glance', err);
+            reject(err);
+          } else {
+            _this.logger.log('info', 'successfully updated glance', body);
+            resolve(body);
+          }
+        });
+      });
+    });
+  }
 };
 
 const firstItemOrUndefined = (data, pluckValue) => {
