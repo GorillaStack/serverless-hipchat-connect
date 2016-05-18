@@ -7,7 +7,7 @@ exports.handler = function (event, context, cb) {
   lib.logger.log('debug', 'In /installed handler');
   lib.logger.log('debug', 'Event json:', JSON.stringify(event));
 
-  let hipchat = new HipChatAPI(lib.dbManager);
+  let hipchat = new HipChatAPI(lib.dbManager, lib.logger);
 
   return hipchat.saveInstallation(event.body).then(
     (data) => cb(null, data),

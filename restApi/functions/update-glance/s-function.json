@@ -14,14 +14,14 @@
   "endpoints": [
     {
       "path": "update-glance",
-      "method": "GET",
+      "method": "POST",
       "type": "AWS",
       "authorizationType": "none",
       "authorizerFunction": false,
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
-        "application/json": ""
+        "application/x-www-form-urlencoded": "$${apiGatewayTemplateUrlEncoded}"
       },
       "responses": {
         "400": {

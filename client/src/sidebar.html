@@ -58,11 +58,12 @@
 
       $('#openDialog').click(function () {
         HipChat.dialog.open({
-          key: 'sample-dialog'
+          key: 'sample.dialog'
         });
       });
 
-      $('#sendCard').click(function () {
+      $('#sendCard').click(function (event) {
+        event.preventDefault();
         //This will request a JWT token from the HipChat client, signed with the installation shared secret,
         //which you use to secure the REST call
         HipChat.auth.withToken(function (err, token) {
@@ -80,7 +81,8 @@
         });
       });
 
-      $('#updateGlance').click(function () {
+      $('#updateGlance').click(function (event) {
+        event.preventDefault();
         HipChat.auth.withToken(function (err, token) {
           $.ajax({
             type: 'POST',

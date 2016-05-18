@@ -13,7 +13,7 @@ exports.handler = function (event, context) {
   lib.logger.log('debug', 'In /uninstalled handler');
   lib.logger.log('debug', 'Event json:', JSON.stringify(event));
 
-  let hipchat = new HipChatAPI(lib.dbManager);
+  let hipchat = new HipChatAPI(lib.dbManager, lib.logger);
   let params = parseQueryParams(event.params);
   hipchat.removeInstallation(params[INSTALLATION_URL_PARAMETER]).then(
     () => context.succeed({ location: params[REDIRECT_URL_PARAMETER] }),
