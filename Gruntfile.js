@@ -6,11 +6,31 @@ const _ = require('lodash');
 
 // Constants
 const CONFIG_FILE = './restApi/config.json';
+const DESCRIPTOR_FILE = './restApi/atlassian-connect.json';
 const FILE_ENCODING = 'utf8';
 
-const substituteConfigInTemplate = (data, env) => {
+const joinConfig = (configs) => {
+  let master = {};
+  configs.forEach((config) => {
+    Object.keys(config).forEach((key) => {
+      master[key] = config[key];
+    });
+  });
+
+  return master;
+};
+
+const getDescriptorWithConfigSubstituted = (config) => {
+  let data = fs.readFileSync(DESCRIPTOR_FILE, { encoding: FILE_ENCODING });
+  let substitutedData = _.template(data)(config);
+  return JSON.parse(substitutedData);
+};
+
+const substituteConfigAndDescriptorInTemplate = (data, env) => {
   let config = getEnvironmentConfig(env);
-  return _.template(data)(config);
+  let descriptor = getDescriptorWithConfigSubstituted(config);
+  let joinedConfig = joinConfig([config, descriptor]);
+  return _.template(data)(joinedConfig);
 };
 
 const getEnvironmentConfig = (env) => {
@@ -31,7 +51,7 @@ module.exports = function (grunt) {
         dest: 'client/dist/',
         options: {
           process: function (content, srcpath) {
-            return substituteConfigInTemplate(content, 'dev');
+            return substituteConfigAndDescriptorInTemplate(content, 'dev');
           }
         }
       },
@@ -42,7 +62,7 @@ module.exports = function (grunt) {
         dest: 'client/dist/',
         options: {
           process: function (content, srcpath) {
-            return substituteConfigInTemplate(content, 'beta');
+            return substituteConfigAndDescriptorInTemplate(content, 'beta');
           }
         }
       },
@@ -53,7 +73,7 @@ module.exports = function (grunt) {
         dest: 'client/dist/',
         options: {
           process: function (content, srcpath) {
-            return substituteConfigInTemplate(content, 'prod');
+            return substituteConfigAndDescriptorInTemplate(content, 'prod');
           }
         }
       }

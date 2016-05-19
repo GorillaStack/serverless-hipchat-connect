@@ -49,46 +49,46 @@
         ]
       }
     },
-    "DynamoDBInstallationTable" : {
-      "Type" : "AWS::DynamoDB::Table",
-      "Properties" : {
-        "AttributeDefinitions" : [
+    "DynamoDBInstallationTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
           {
             "AttributeName": "oauthId",
             "AttributeType": "S"
           }
         ],
-        "KeySchema" : [
+        "KeySchema": [
           {
             "AttributeName": "oauthId",
             "KeyType": "HASH"
           }
         ],
-        "ProvisionedThroughput" : {
-           "ReadCapacityUnits" : 3,
-           "WriteCapacityUnits" : 1
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 3,
+          "WriteCapacityUnits": 1
         }
       }
     },
-    "DynamoDBAccessTokenTable" : {
-      "Type" : "AWS::DynamoDB::Table",
-      "DependsOn" : "DynamoDBInstallationTable",
-      "Properties" : {
-        "AttributeDefinitions" : [
+    "DynamoDBAccessTokenTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DependsOn": "DynamoDBInstallationTable",
+      "Properties": {
+        "AttributeDefinitions": [
           {
             "AttributeName": "oauthId",
             "AttributeType": "S"
           }
         ],
-        "KeySchema" : [
+        "KeySchema": [
           {
             "AttributeName": "oauthId",
             "KeyType": "HASH"
           }
         ],
-        "ProvisionedThroughput" : {
-           "ReadCapacityUnits" : 3,
-           "WriteCapacityUnits" : 1
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 3,
+          "WriteCapacityUnits": 1
         }
       }
     }
@@ -105,11 +105,15 @@
     },
     "InstallationTableName": {
       "Description": "Name of the InstallationTable created by CloudFormation",
-      "Value": { "Ref": "DynamoDBInstallationTable" }
+      "Value": {
+        "Ref": "DynamoDBInstallationTable"
+      }
     },
     "AccessTokenTableName": {
       "Description": "Name of the AccessTokenTable created by CloudFormation",
-      "Value": { "Ref": "DynamoDBAccessTokenTable" }
+      "Value": {
+        "Ref": "DynamoDBAccessTokenTable"
+      }
     }
   }
 }
