@@ -30,7 +30,7 @@
         "default": {
           "statusCode": "200",
           "responseParameters": {
-            "method.response.header.Access-Control-Allow-Origin": "*"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
           },
           "responseModels": {
             "application/json;charset=UTF-8": "Empty"

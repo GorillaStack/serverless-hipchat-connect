@@ -21,7 +21,9 @@
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
-        "application/json": "{ \"body\" : \"$input.json('$')\" }"
+        "application/json": {
+          "body": "$input.json('$')"
+        }
       },
       "responses": {
         "400": {
