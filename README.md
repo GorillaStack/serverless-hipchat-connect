@@ -22,10 +22,11 @@ Component | Purpose | Description
 1. Install grunt-cli: `npm install grunt-cli -g`
 1. Install project dependencies: `npm install`
 1. Install project dependencies: `pushd restApi && npm install && popd`
+1. Transpile the lambda code: `grunt run:babel-once` (use `grunt run:babel` to transpile continuously on changes)
 1. Deploy resources a new AWS account, region and project stage: `sls project init` (ignore warnings, just takes a little time for CloudFormation to create resources referenced in variables)
 1. Deploy endpoints and lambdas `sls dash deploy`
 1. Deploy client-side resources for your environment `grunt copy:dev && sls client deploy` (see note below)
-1. Get function logs `sls function logs restApi/example/healthcheck`
+1. Get function logs `sls function logs healthcheck`
 1. Open ngrok tunnel: `ngrok http 3000`
 1. Put tunnel url into `restApi/config.json` under `host:` for `dev`
 1. Run locally: `sls offline start`
