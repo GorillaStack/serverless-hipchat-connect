@@ -2,20 +2,20 @@
   "dev": {
     "logLevel": "debug",
     "host": "http://d6513fa2.ngrok.io",
-    "staticAssetsHost": "https://s3-ap-northeast-1.amazonaws.com/serverless-hipchat-connect-client.dev.ap-northeast-1",
+    "staticAssetsHost": "http://serverless-hipchat-connect-client.dev.ap-northeast-1.s3-website-ap-northeast-1.amazonaws.com",
     "useDynamoDBLocal": true,
     "dynamoDBLocalURL": "http://localhost:8000",
     "maxJWTTokenAge": 86400
   },
   "beta": {
-    "logLevel": "debug",
-    "host": "http://your-subdomain.ngrok.io",
-    "staticAssetsHost": "https://your-subdomain.awss3.com",
+    "logLevel": "info",
+    "host": "https://3evvaltekb.execute-api.ap-northeast-1.amazonaws.com/beta",
+    "staticAssetsHost": "http://serverless-hipchat-connect-client.beta.ap-northeast-1.s3-website-ap-northeast-1.amazonaws.com",
     "maxJWTTokenAge": 86400
   },
   "prod": {
-    "host": "https://your-subdomain.apigateway.aws.com",
-    "staticAssetsHost": "https://your-subdomain.awss3.com",
+    "host": "https://3evvaltekb.execute-api.ap-northeast-1.amazonaws.com/prod",
+    "staticAssetsHost": "http://serverless-hipchat-connect-client.prod.ap-northeast-1.s3-website-ap-northeast-1.amazonaws.com",
     "logLevel": "warn",
     "maxJWTTokenAge": 900
   }
