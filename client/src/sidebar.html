@@ -74,8 +74,10 @@
             headers: { authorization: 'JWT ' + token },
             data: { cardDescription: 'This card was posted from the Sidebar\nPretty cool hey!' },
             dataType: 'json',
-            error: function (jqXHR, status) {
-              alert('fail' + status.code);
+            error: function (response, jqXHR, status) {
+              if (response.status !== 200) {
+                alert('fail' + status.code);
+              }
             }
           });
         });
@@ -90,8 +92,10 @@
             headers: { authorization: 'JWT ' + token },
             data: { glanceText: 'Glance updated from Sidebar' },
             dataType: 'json',
-            error: function (jqXHR, status) {
-              alert('fail' + status.code);
+            error: function (response, jqXHR, status) {
+              if (response.status !== 200) {
+                alert('fail' + status.code);
+              }
             }
           });
         });
