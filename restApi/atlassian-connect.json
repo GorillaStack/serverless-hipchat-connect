@@ -25,13 +25,15 @@
     "configurable": {
       "url": "${staticAssetsHost}/configure.html"
     },
-    "webhook": {
-      "url": "${host}/echo",
-      "pattern": "^/echo",
-      "event": "room_message",
-      "name": "Echo",
-      "authentication": "jwt"
-    },
+    "webhook": [
+      {
+        "url": "${host}/echo",
+        "pattern": "^/echo",
+        "event": "room_message",
+        "name": "Echo",
+        "authentication": "jwt"
+      }
+    ],
     "glance": [
       {
         "name": {
