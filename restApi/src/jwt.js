@@ -26,6 +26,21 @@ const jwtSubstringIfPresent = (headers, headerKey) => {
   return value ? value.substring(4) : undefined;
 };
 
+const looksLikeJSON = (thing) => typeof thing === 'string' && thing.match(/(?:\s+)?\{.*\}(?:\s+)?/);
+
+const ensureParamsAreJSON = (req) => {
+  let cleanedReq = {};
+  Object.keys(req).forEach((key) => {
+    if (looksLikeJSON(req[key])) {
+      cleanedReq[key] = JSON.parse(req[key]);
+    } else {
+      cleanedReq[key] = req[key];
+    }
+  });
+
+  return cleanedReq;
+};
+
 const extractEncodedJWTToken = (req) => {
   return req.query[QUERY_PARAM_KEY_SIGNED_REQUEST]
     || jwtSubstringIfPresent(req.headers, HEADER_AUTHORIZATION_LOWER_CASE)
@@ -39,6 +54,9 @@ const getInstallationFromStore = (lib, oauthId) => {
 const validateJWT = (req, lib) => {
   return new Promise((resolve, reject) => {
     try {
+      // API Gateway sometimes makes the params string, need to fix that
+      req = ensureParamsAreJSON(req);
+
       // Extract the JWT token
       let encodedJwt = extractEncodedJWTToken(req);
 
