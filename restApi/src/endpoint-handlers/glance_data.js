@@ -12,7 +12,7 @@ const handler = (lib, hipchat, event, oauthData) => {
         }
       };
 
-      resolve(JSON.stringify(sampleGlanceData));
+      resolve(sampleGlanceData);
     } catch (err) {
       reject(err);
     }

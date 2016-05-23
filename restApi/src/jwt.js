@@ -67,12 +67,17 @@ const validateJWT = (req, lib) => {
 
       getInstallationFromStore(lib, oauthId).then(
         (installations) => {
-          // Validate the token signature using the installation's OAuth secret sent by HipChat during add-on installation
-          // (to ensure the call comes from this HipChat installation)
-          jwtUtil.decode(encodedJwt, installations.Items[0].oauthSecret);
+          try {
+            // Validate the token signature using the installation's OAuth secret sent by HipChat during add-on installation
+            // (to ensure the call comes from this HipChat installation)
+            jwtUtil.decode(encodedJwt, installations.Items[0].oauthSecret);
 
-          lib.logger.log('debug', 'Valid JWT');
-          resolve({ oauthId: oauthId, roomId: roomId });
+            lib.logger.log('debug', 'Valid JWT');
+            resolve({ oauthId: oauthId, roomId: roomId });
+          } catch (e) {
+            lib.logger.log('error', 'Could not validate JWT', e);
+            reject(e);
+          }
         },
 
         (error) => reject(error)
