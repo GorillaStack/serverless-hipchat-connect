@@ -72,7 +72,9 @@
             type: 'POST',
             url: '${host}/post-card',
             headers: { authorization: 'JWT ' + token },
-            data: { cardDescription: 'This card was posted from the Sidebar\nPretty cool hey!' },
+            data: JSON.stringify({ cardDescription: 'This card was posted from the Sidebar\nPretty cool hey!' }),
+            crossDomain: true,
+            contentType: 'application/json',
             dataType: 'json',
             error: function (response, jqXHR, status) {
               if (response.status !== 200) {
@@ -90,7 +92,9 @@
             type: 'POST',
             url: '${host}/update-glance',
             headers: { authorization: 'JWT ' + token },
-            data: { glanceText: 'Glance updated from Sidebar' },
+            data: JSON.stringify({ glanceText: 'Glance updated from Sidebar' }),
+            crossDomain: true,
+            contentType: 'application/json',
             dataType: 'json',
             error: function (response, jqXHR, status) {
               if (response.status !== 200) {

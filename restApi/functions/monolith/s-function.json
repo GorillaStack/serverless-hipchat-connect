@@ -137,9 +137,32 @@
         },
         "default": {
           "statusCode": "200",
-          "responseParameters": {},
-          "responseModels": {
-            "application/json;charset=UTF-8": "Empty"
+          "responseParameters": {
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          },
+          "responseTemplates": {
+            "application/json;charset=UTF-8": ""
+          }
+        }
+      }
+    },{
+      "path": "post-card",
+      "method": "OPTIONS",
+      "authorizationType": "none",
+      "authorizerFunction": false,
+      "apiKeyRequired": false,
+      "requestParameters": {},
+      "requestTemplates": {
+        "application/json": "$${defaultEndpoint}",
+        "application/x-www-form-urlencoded": "$${defaultUrlEncodedEndpoint}"
+      },
+      "responses": {
+        "default": {
+          "statusCode": "200",
+          "responseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,Cache-Control'",
+            "method.response.header.Access-Control-Allow-Methods": "'*'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
           },
           "responseTemplates": {
             "application/json;charset=UTF-8": ""
@@ -167,9 +190,6 @@
           "responseParameters": {
             "method.response.header.Location": "integration.response.body.location"
           },
-          "responseModels": {
-            "application/json;charset=UTF-8": "Empty"
-          },
           "responseTemplates": {
             "application/json;charset=UTF-8": ""
           }
@@ -185,6 +205,7 @@
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
+        "application/json": "$${defaultEndpoint}",
         "application/x-www-form-urlencoded": "$${defaultUrlEncodedEndpoint}"
       },
       "responses": {
@@ -193,12 +214,33 @@
         },
         "default": {
           "statusCode": "200",
-          "responseParameters": {},
-          "responseModels": {
-            "application/json;charset=UTF-8": "Empty"
+          "responseParameters": {
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
           },
           "responseTemplates": {
-            "application/json;charset=UTF-8": ""
+          }
+        }
+      }
+    },
+    {
+      "path": "update-glance",
+      "method": "OPTIONS",
+      "authorizationType": "none",
+      "authorizerFunction": false,
+      "apiKeyRequired": false,
+      "requestParameters": {},
+      "requestTemplates": {
+        "application/json": "$${defaultEndpoint}"
+      },
+      "responses": {
+        "default": {
+          "statusCode": "200",
+          "responseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,Cache-Control'",
+            "method.response.header.Access-Control-Allow-Methods": "'*'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          },
+          "responseTemplates": {
           }
         }
       }
