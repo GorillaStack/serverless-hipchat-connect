@@ -1,21 +1,29 @@
 // Includes
 import { validateJWT } from '../../../restApi/src/jwt';
+import jwtUtil from 'jwt-simple';
 
 // Test data
-const installation = {
-  oauthId: 'e9ed111c-3552-45b4-a7f4-3e402efab798',
-  oauthSecret: 'AIEY2pL6S7FRpgb8scjcGjpRjwscLD6qpt2UZdHl'
+let installation = {
+  apiUrl: 'https://api.hipchat.com/v2/',
+  capabilitiesUrl: 'https://api.hipchat.com/v2/capabilities',
+  groupId: 347386,
+  oauthId: 'ad1333f0-c5ae-4330-9151-38454e7c86a7',
+  oauthSecret: 'OYTec3Gie0jNiCN0YwURg3MPyZ3CZcAYgkD6sCbb',
+  roomId: 2656454,
+  tokenUrl: 'https://api.hipchat.com/v2/oauth/token'
 };
-
-const token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNDYzNzg4NTI0LCAiaXNzIjogImU5ZWQxMTFjLTM1NTItNDViNC1hN2Y0LTNlNDAyZWZhYjc5OCIsICJwcm4iOiAiMzY3MDM3NSIsICJqdGkiOiAiTG5xM2VZZDdjTTBGbWFUQ3dWMkIiLCAiY29udGV4dCI6IHsicm9vbV9pZCI6IDI2NTY0NTQsICJ1c2VyX3R6IjogIkF1c3RyYWxpYS9TeWRuZXkifSwgImlhdCI6IDE0NjM3ODc2MjQsICJzdWIiOiAiMzY3MDM3NSJ9.yqOyOVxHCuipGu4Ag_X8jbiGx_Nxcqfvn83LoaSysos';
 
 // Stub lib
 const lib = {
   logger: {
-    log: () => {}
+    log: (...args) => {
+      //console.log(args);
+    }
   },
   dbManager: {
-    query: () => installation
+    query: () => new Promise((resolve, reject) => {
+      resolve({ Items: [installation] });
+    })
   }
 };
 
@@ -41,12 +49,34 @@ const runTest = (request, done) => {
 const JWT_HEADER_PREFIX = 'JWT ';
 
 describe('validateJWT', () => {
+  let token = null;
+
+  beforeAll(() => {
+    let now = new Date;
+    let expiryDate = new Date(now.valueOf() + 100000);
+    token = jwtUtil.encode({
+      iss: installation.oauthId,
+      context: {
+        room_id: installation.roomId,
+      },
+      expiry: expiryDate
+    }, installation.oauthSecret);
+  });
+
   it('can handle JWT token in "signed_request" query parameter', (done) => {
     const request = {
       query: {
         'signed_request': token
       },
-      header: {}
+      headers: {}
+    };
+
+    runTest(request, done);
+  });
+
+  it('can handle JWT token in "signed_request" query parameter, where the query string is a string', (done) => {
+    const request = {
+      query: JSON.stringify({ signed_request: token })
     };
 
     runTest(request, done);
@@ -55,7 +85,7 @@ describe('validateJWT', () => {
   it('can handle JWT token in "Authorization" header', (done) => {
     const request = {
       query: {},
-      header: {
+      headers: {
         Authorization: JWT_HEADER_PREFIX + token
       }
     };
@@ -66,7 +96,7 @@ describe('validateJWT', () => {
   it('can handle JWT token in "authorization" header', (done) => {
     const request = {
       query: {},
-      header: {
+      headers: {
         authorization: JWT_HEADER_PREFIX + token
       }
     };
