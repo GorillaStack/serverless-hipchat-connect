@@ -16,20 +16,54 @@ Component | Purpose | Description
 [Winston](https://www.npmjs.com/package/winston) | Logging | Good logging solution with a variety of [transports](https://github.com/winstonjs/winston/blob/master/docs/transports.md) including AWS SNS, Email, MongoDB, Console, File etc.
 
 
-## Usage
+## Getting Started
+
+### Dependencies
 
 1. Install serverless: `npm install serverless -g`
 1. Install grunt-cli: `npm install grunt-cli -g`
-1. Install project dependencies: `npm install`
-1. Install project dependencies: `pushd restApi && npm install && popd`
-1. Transpile the lambda code: `grunt run:babel-once` (use `grunt run:babel` to transpile continuously on changes)
-1. Deploy resources a new AWS account, region and project stage: `sls project init` (ignore warnings, just takes a little time for CloudFormation to create resources referenced in variables)
-1. Deploy endpoints and lambdas `sls dash deploy`
-1. Deploy client-side resources for your environment `grunt copy:dev && sls client deploy` (see note below)
-1. Get function logs `sls function logs healthcheck`
+1. Install serverless project dependencies: `npm install`
+1. Install lambda code dependencies: `pushd restApi && npm install && popd`
+
+### Run Locally / Dev Loop
+
+After installing the "Dependencies" above:
+
+##### In one terminal run ngrok to expose localhost to the outside world:
+
 1. Open ngrok tunnel: `ngrok http 3000`
 1. Put tunnel url into `restApi/config.json` under `host:` for `dev`
-1. Run locally: `sls offline start`
+
+##### In one terminal run babel:
+
+Run `grunt run:babel` to transpile continuously on changes
+
+##### In one terminal serve static assets:
+
+1. Run `grunt copy:dev` to copy configurations for the dev stage into static assets
+1. Run `cd client/dist` to change into the static asset directory
+1. Run `python -m SimpleHTTPServer 8010` to serve static assets (emulating s3)
+
+##### In one terminal, run DynamoDBLocal (see instructions below)
+
+Run `java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar` from the folder containing your DynamoDBLocal install jar file
+
+##### In one terminal, run serverless offline:
+
+Run locally: `sls offline start` (emulating API Gateway)
+
+Then go to http://localhost:8010 in your web browser to install the plugin.
+
+
+### Deploy a Stage
+
+After installing the "Dependencies" above:
+
+1. Transpile the lambda code: `grunt run:babel-once` (transpiles just once, not in watch mode)
+1. Deploy resources a new AWS account, region and project stage: `sls project init` (ignore warnings, just takes a little time for CloudFormation to create resources referenced in variables)
+1. Deploy endpoints and lambdas `sls dash deploy`
+1. Deploy client-side resources for your environment `grunt copy:beta && sls client deploy --stage beta` (see note below)
+1. Get function logs `sls function logs healthcheck`
 
 ### Client assets to s3
 
@@ -40,7 +74,7 @@ We also support the substitution of config values from your environment specific
 ```json
 "custom": {
   "client": {
-    "bucketName": "serverless-hipchat-connect-client.${stage}.${region}"
+    "bucketName": "${name}-client.${stage}.${region}"
   }
   ...
 }
