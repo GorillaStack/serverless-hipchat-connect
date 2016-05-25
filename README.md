@@ -44,7 +44,7 @@ Run `grunt run:babel` to transpile continuously on changes
 1. Run `cd client/dist` to change into the static asset directory
 1. Run `python -m SimpleHTTPServer 8010` to serve static assets (emulating s3)
 
-##### In one terminal, run DynamoDBLocal (see instructions below)
+##### In one terminal, run DynamoDBLocal ([see instructions below](#working-with-dynamodb-local))
 
 Run `java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar` from the folder containing your DynamoDBLocal install jar file
 
