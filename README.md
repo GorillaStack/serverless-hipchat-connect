@@ -40,9 +40,9 @@ Run `grunt run:babel` to transpile continuously on changes
 
 ##### In one terminal serve static assets:
 
-1. Run `grunt copy:dev` to copy configurations for the dev stage into static assets
-1. Run `cd client/dist` to change into the static asset directory
-1. Run `python -m SimpleHTTPServer 8010` to serve static assets (emulating s3)
+Run `grunt run:s3-local`
+
+Now modify files in `client/src`.  To fill in stage configuration and make changes appear, either interrupt (^C) and rerun the command above, or run `grunt copy:dev`.
 
 ##### In one terminal, run DynamoDBLocal ([see instructions below](#working-with-dynamodb-local))
 

@@ -84,6 +84,9 @@ module.exports = function (grunt) {
       },
       'babel-once': {
         exec: 'node node_modules/babel-cli/bin/babel --presets es2015 -d restApi/lib restApi/src'
+      },
+      's3-local': {
+        exec: 'grunt copy:dev && pushd client/dist && python -m SimpleHTTPServer 8010 && popd'
       }
     }
   });
