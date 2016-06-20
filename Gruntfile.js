@@ -87,6 +87,14 @@ module.exports = function (grunt) {
       },
       's3-local': {
         exec: 'grunt copy:dev && pushd client/dist && python -m SimpleHTTPServer 8010 && popd'
+      },
+      'create-local-dynamodb-tables': {
+        exec: 'bash create_dynamo_db_local_tables.sh',
+        options: {
+          passArgs: [
+            'region'
+          ]
+        }
       }
     }
   });
