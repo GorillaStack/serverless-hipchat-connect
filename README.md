@@ -48,6 +48,10 @@ Now modify files in `client/src`.  To fill in stage configuration and make chang
 
 Run `java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar` from the folder containing your DynamoDBLocal install jar file
 
+First time you run this, you will need to create your DynamoDB local tables to match those created for your 'dev' stage.  We created a script to do this for you. Simply substitute in the region you initialised this stage in.
+
+`grunt run:create-local-dynamodb-tables --region=<aws_region(e.g. ap-northeast-1)>`
+
 ##### In one terminal, run serverless offline:
 
 Run locally: `sls offline start` (emulating API Gateway)
