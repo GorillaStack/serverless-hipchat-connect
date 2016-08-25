@@ -25,21 +25,20 @@ const substituteConfigInTemplate = (data, config) => {
 * created by serverless.  This is the part of s-function.json that is required:
 * "environment": { "SERVERLESS_STAGE": "${stage}" },
 */
-const getConfigurationForServerlessStage = (data) => {
+const getConfigurationForServerlessStage = data => {
   let jsonData = JSON.parse(data);
   return jsonData[process.env.SERVERLESS_STAGE];
 };
 
-const readFile = (file) => {
-  return fs.readFileSync(file, { encoding: FILE_ENCODING });
-};
+const readFile = file =>
+  fs.readFileSync(file, { encoding: FILE_ENCODING }));
 
 const getCapabilityDescriptor = (file, config) => {
   let data = readFile(file);
   return substituteConfigInTemplate(data, config);
 };
 
-const getApplicationConfiguration = (file) => {
+const getApplicationConfiguration = file => {
   let data = readFile(file);
   return getConfigurationForServerlessStage(data);
 };
