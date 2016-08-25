@@ -32,10 +32,10 @@ const getDbManager = (config, logger) => {
   }
 
   if (isConfiguredForDynamoDBLocal(config)) {
-    logger.log('debug', 'Adding configuration for dynamodb local');
+    logger.debug('Adding configuration for dynamodb local');
     options.endpoint = config.dynamoDBLocalURL;
   } else {
-    logger.log('debug', 'Using dynamodb remote');
+    logger.debug('Using dynamodb remote');
   }
 
   let serviceInterfaceObject = new AWS.DynamoDB(options);
@@ -53,9 +53,8 @@ const getDbManager = (config, logger) => {
     * @return Promise
     */
     query: function (tableName, keyName, keyValue) {
-      let _this = this;
       return new Promise((resolve, reject) => {
-        let query = {
+        const query = {
           TableName: tableName,
           KeyConditionExpression: '#name = :value',
           ExpressionAttributeNames: {
@@ -65,14 +64,35 @@ const getDbManager = (config, logger) => {
             ':value': keyValue
           }
         };
-        _this.dynamodb.query(query, (error, data) => {
+        this.dynamodb.query(query, (error, data) => {
           if (error) {
-            logger.log('error', 'Error querying DynamoDB:', error);
-            logger.log('error', 'Query:', query);
+            logger.error('Error querying DynamoDB:', { msg: error.toString(), stack: error.stack, query: query });
             reject(error);
           } else {
-            logger.log('debug', 'Query:', query);
-            logger.log('debug', 'Result:', data);
+            logger.debug('query complete:', { query: query, result: data });
+            resolve(data);
+          }
+        });
+      });
+    },
+
+    /**
+    * scan
+    *
+    * Do a table scan on the given table
+    * @return Promise
+    */
+    scan: function (tableName) {
+      return new Promise((resolve, reject) => {
+        const params = {
+          TableName: tableName
+        };
+        this.dynamodb.scan(params, (error, data) => {
+          if (error) {
+            logger.error('Error scanning DynamoDB:', { msg: error.toString(), stack: error.stack, params: params });
+            reject(error);
+          } else {
+            logger.debug('scan complete:', { params: params, result: data });
             resolve(data);
           }
         });
@@ -87,20 +107,17 @@ const getDbManager = (config, logger) => {
     * @return Promise
     */
     put: function (tableName, item) {
-      let _this = this;
       return new Promise((resolve, reject) => {
-        let modifier = {
+        const modifier = {
           TableName: tableName,
           Item: item
         };
-        _this.dynamodb.put(modifier, (error, data) => {
+        this.dynamodb.put(modifier, (error, data) => {
           if (error) {
-            logger.log('error', 'Error performing put on DynamoDB:', error);
-            logger.log('error', 'Put modifier:', modifier);
+            logger.error('Error putting into DynamoDB:', { msg: error.toString(), stack: error.stack, modifier: modifier });
             reject(error);
           } else {
-            logger.log('debug', 'Put:', modifier);
-            logger.log('debug', 'Result:', data);
+            logger.debug('put complete:', { modifier: modifier, result: data });
             resolve(data);
           }
         });
@@ -115,7 +132,6 @@ const getDbManager = (config, logger) => {
     * @return Promise
     */
     delete: function (tableName, keyName, keyValue) {
-      let _this = this;
       return new Promise((resolve, reject) => {
         let modifier = {
           TableName: tableName,
@@ -123,14 +139,12 @@ const getDbManager = (config, logger) => {
         };
         modifier.Key[keyName] = keyValue;
 
-        _this.dynamodb.delete(modifier, (error, data) => {
+        this.dynamodb.delete(modifier, (error, data) => {
           if (error) {
-            logger.log('error', 'Error performing delete on DynamoDB:', error);
-            logger.log('error', 'Delete modifier:', modifier);
+            logger.error('Error deleting from DynamoDB:', { msg: error.toString(), stack: error.stack, modifier: modifier });
             reject(error);
           } else {
-            logger.log('debug', 'Delete:', modifier);
-            logger.log('debug', 'Result:', data);
+            logger.debug('delete complete:', { modifier: modifier, result: data });
             resolve(data);
           }
         });
