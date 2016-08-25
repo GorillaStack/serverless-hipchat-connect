@@ -41,15 +41,13 @@ const ensureParamsAreJSON = req => {
   return cleanedReq;
 };
 
-const extractEncodedJWTToken = req => {
-  return req.query[QUERY_PARAM_KEY_SIGNED_REQUEST]
+const extractEncodedJWTToken = req =>
+  req.query[QUERY_PARAM_KEY_SIGNED_REQUEST]
     || jwtSubstringIfPresent(req.headers, HEADER_AUTHORIZATION_LOWER_CASE)
     || jwtSubstringIfPresent(req.headers, HEADER_AUTHORIZATION_CAPITALISED);
-};
 
-const getInstallationFromStore = (lib, oauthId) => {
-  return lib.dbManager.query(process.env.INSTALLATION_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId);
-};
+const getInstallationFromStore = (lib, oauthId) =>
+  lib.dbManager.query(process.env.INSTALLATION_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId);
 
 const validateJWT = (req, lib) => {
   return new Promise((resolve, reject) => {
@@ -72,7 +70,7 @@ const validateJWT = (req, lib) => {
             // (to ensure the call comes from this HipChat installation)
             jwtUtil.decode(encodedJwt, installations.Items[0].oauthSecret);
 
-            lib.logger.debug( 'Valid JWT');
+            lib.logger.debug('Valid JWT');
             resolve({ oauthId: oauthId, roomId: roomId });
           } catch (e) {
             lib.logger.error('Could not validate JWT', e);
@@ -80,7 +78,7 @@ const validateJWT = (req, lib) => {
           }
         },
 
-        (error) => reject(error)
+        error => reject(error)
       );
 
     } catch (err) {

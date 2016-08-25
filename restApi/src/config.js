@@ -31,7 +31,7 @@ const getConfigurationForServerlessStage = data => {
 };
 
 const readFile = file =>
-  fs.readFileSync(file, { encoding: FILE_ENCODING }));
+  fs.readFileSync(file, { encoding: FILE_ENCODING });
 
 const getCapabilityDescriptor = (file, config) => {
   let data = readFile(file);

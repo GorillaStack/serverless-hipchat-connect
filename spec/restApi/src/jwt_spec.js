@@ -2,6 +2,8 @@
 import { validateJWT } from '../../../restApi/src/jwt';
 import jwtUtil from 'jwt-simple';
 
+import stubLogger from '../helpers/stub_logger';
+
 // Test data
 let installation = {
   apiUrl: 'https://api.hipchat.com/v2/',
@@ -15,11 +17,7 @@ let installation = {
 
 // Stub lib
 const lib = {
-  logger: {
-    log: (...args) => {
-      //console.log(args);
-    }
-  },
+  logger: stubLogger,
   dbManager: {
     query: () => new Promise((resolve, reject) => {
       resolve({ Items: [installation] });
@@ -29,14 +27,14 @@ const lib = {
 
 const runTest = (request, done) => {
   validateJWT(request, lib).then(
-    (oauthData) => {
+    oauthData => {
       expect(oauthData).not.toBeUndefined();
       expect(oauthData.oauthId).not.toBeUndefined();
       expect(oauthData.oauthId).toEqual(installation.oauthId);
       done();
     },
 
-    (err) => {
+    err => {
       console.log(err);
       console.log(err.stack);
       throw err;
@@ -63,7 +61,7 @@ describe('validateJWT', () => {
     }, installation.oauthSecret);
   });
 
-  it('can handle JWT token in "signed_request" query parameter', (done) => {
+  it('can handle JWT token in "signed_request" query parameter', done => {
     const request = {
       query: {
         'signed_request': token
@@ -74,7 +72,7 @@ describe('validateJWT', () => {
     runTest(request, done);
   });
 
-  it('can handle JWT token in "signed_request" query parameter, where the query string is a string', (done) => {
+  it('can handle JWT token in "signed_request" query parameter, where the query string is a string', done => {
     const request = {
       query: JSON.stringify({ signed_request: token })
     };
@@ -82,7 +80,7 @@ describe('validateJWT', () => {
     runTest(request, done);
   });
 
-  it('can handle JWT token in "Authorization" header', (done) => {
+  it('can handle JWT token in "Authorization" header', done => {
     const request = {
       query: {},
       headers: {
@@ -93,7 +91,7 @@ describe('validateJWT', () => {
     runTest(request, done);
   });
 
-  it('can handle JWT token in "authorization" header', (done) => {
+  it('can handle JWT token in "authorization" header', done => {
     const request = {
       query: {},
       headers: {
