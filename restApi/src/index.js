@@ -32,27 +32,24 @@ const getIndex = (params) => {
   let options = params || {};
 
   // Create a logger for our logic
-  const logger = createLogger();
-  logger.log('debug', 'Started Logger');
-
-  // Import application configuration
-  logger.log('debug', 'Loading application configuration for stage "%s"', process.env.SERVERLESS_STAGE);
   const config = getApplicationConfiguration(options.configFile || CONFIG_FILE_PATH);
-  logger.log('info', 'Application configuration loaded');
-  logger.log('debug', 'Application configuration:', config);
+  const logger = createLogger(config.logLevel || 'debug');
+  logger.debug('Started Logger');
+  logger.info('Application configuration loaded');
+  logger.debug('Application configuration:', config);
 
   // Let's be lazy about loading capabilities
   const getCapabilities = () => {
-    logger.log('debug', 'Loading capabilities descriptor', process.env.SERVERLESS_STAGE);
+    logger.debug('Loading capabilities descriptor', process.env.SERVERLESS_STAGE);
     let capabilities = getCapabilityDescriptor(CAPABILITIES_FILE_PATH, config);
-    logger.log('info', 'Capabilities descriptor loaded');
-    logger.log('debug', 'Capabilities descriptor:', capabilities);
+    logger.info('Capabilities descriptor loaded');
+    logger.debug('Capabilities descriptor:', capabilities);
     return capabilities;
   };
 
   // Create DynamoDBManager
   const dbManager = getDbManager(config, logger);
-  logger.log('info', 'DynamoDB Manager loaded');
+  logger.info('DynamoDB Manager loaded');
 
   return {
     logger: logger,

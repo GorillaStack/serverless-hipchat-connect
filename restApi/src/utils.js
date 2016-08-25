@@ -1,10 +1,10 @@
 'use strict';
 
-const parseWeirdAPIGatewayFormat = (input) => {
-  let sanitisedInput = input.replace(/[\{\}]/g, '');
+const parseWeirdAPIGatewayFormat = input => {
+  const sanitisedInput = input.replace(/[\{\}]/g, '');
   let output = {};
   sanitisedInput.split(/\,/).forEach((parameterPairString) => {
-    let parameterPairArray = parameterPairString.trim().split(/\=/);
+    const parameterPairArray = parameterPairString.trim().split(/\=/);
     output[parameterPairArray[0]] = parameterPairArray.slice(1).join('=');
   });
 

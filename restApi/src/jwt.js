@@ -26,11 +26,11 @@ const jwtSubstringIfPresent = (headers, headerKey) => {
   return value ? value.substring(4) : undefined;
 };
 
-const looksLikeJSON = (thing) => typeof thing === 'string' && thing.match(/(?:\s+)?\{.*\}(?:\s+)?/);
+const looksLikeJSON = thing => typeof thing === 'string' && thing.match(/(?:\s+)?\{.*\}(?:\s+)?/);
 
-const ensureParamsAreJSON = (req) => {
+const ensureParamsAreJSON = req => {
   let cleanedReq = {};
-  Object.keys(req).forEach((key) => {
+  Object.keys(req).forEach(key => {
     if (looksLikeJSON(req[key])) {
       cleanedReq[key] = JSON.parse(req[key]);
     } else {
@@ -41,7 +41,7 @@ const ensureParamsAreJSON = (req) => {
   return cleanedReq;
 };
 
-const extractEncodedJWTToken = (req) => {
+const extractEncodedJWTToken = req => {
   return req.query[QUERY_PARAM_KEY_SIGNED_REQUEST]
     || jwtSubstringIfPresent(req.headers, HEADER_AUTHORIZATION_LOWER_CASE)
     || jwtSubstringIfPresent(req.headers, HEADER_AUTHORIZATION_CAPITALISED);
@@ -66,16 +66,16 @@ const validateJWT = (req, lib) => {
       let roomId = jwt.context[ROOM_ID];
 
       getInstallationFromStore(lib, oauthId).then(
-        (installations) => {
+        installations => {
           try {
             // Validate the token signature using the installation's OAuth secret sent by HipChat during add-on installation
             // (to ensure the call comes from this HipChat installation)
             jwtUtil.decode(encodedJwt, installations.Items[0].oauthSecret);
 
-            lib.logger.log('debug', 'Valid JWT');
+            lib.logger.debug( 'Valid JWT');
             resolve({ oauthId: oauthId, roomId: roomId });
           } catch (e) {
-            lib.logger.log('error', 'Could not validate JWT', e);
+            lib.logger.error('Could not validate JWT', e);
             reject(e);
           }
         },
@@ -84,7 +84,7 @@ const validateJWT = (req, lib) => {
       );
 
     } catch (err) {
-      lib.logger.log('error', 'Invalid JWT', err);
+      lib.logger.error('Invalid JWT', err);
       reject(new Error('Invalid JWT - call did not come from this HipChat Installation'));
     }
   });

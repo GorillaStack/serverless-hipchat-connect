@@ -3,7 +3,7 @@
 const handler = (lib, hipchat, event, oauthData) => {
   return new Promise((resolve, reject) => {
     try {
-      lib.logger.log('debug', 'In /update-glance handler');
+      lib.logger.debug('In /update-glance handler');
 
       let glanceData = {
         label: {
@@ -12,11 +12,11 @@ const handler = (lib, hipchat, event, oauthData) => {
         }
       };
 
-      lib.logger.log('debug', 'trying to update glance data', glanceData);
+      lib.logger.debug('trying to update glance data', glanceData);
       hipchat.updateGlanceData(oauthData.oauthId, oauthData.roomId, 'sample.glance', glanceData).then(
         () => resolve(),
-        (err) => {
-          lib.logger.log('error', 'Could not run /update-glance handler', err);
+        err => {
+          lib.logger.error('Could not run /update-glance handler', err);
           reject(err);
         }
       );

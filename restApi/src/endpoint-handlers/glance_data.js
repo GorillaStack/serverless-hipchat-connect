@@ -3,9 +3,9 @@
 const handler = (lib, hipchat, event, oauthData) => {
   return new Promise((resolve, reject) => {
     try {
-      lib.logger.log('debug', 'In /glance-data handler');
+      lib.logger.debug('In /glance-data handler');
 
-      let sampleGlanceData = {
+      const sampleGlanceData = {
         label: {
           value: '<b>Hello</b> World',
           type: 'html'

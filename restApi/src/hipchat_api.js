@@ -56,11 +56,10 @@ const HipChatAPI = class {
   }
 
   getAccessTokenFromStore(oauthId) {
-    let _this = this;
     return new Promise((resolve, reject) => {
-      _this.dbManager.query(process.env.ACCESS_TOKEN_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId).then(
-        (data) => resolve(firstItemOrUndefined(data, 'token')),
-        (error) => reject(error)
+      this.dbManager.query(process.env.ACCESS_TOKEN_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId).then(
+        data => resolve(firstItemOrUndefined(data, 'token')),
+        error => reject(error)
       );
     });
   }
@@ -74,11 +73,10 @@ const HipChatAPI = class {
   }
 
   getInstallationFromStore(oauthId) {
-    let _this = this;
     return new Promise((resolve, reject) => {
-      _this.dbManager.query(process.env.INSTALLATION_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId).then(
-        (data) => resolve(firstItemOrUndefined(data)),
-        (error) => reject(error)
+      this.dbManager.query(process.env.INSTALLATION_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId).then(
+        data => resolve(firstItemOrUndefined(data)),
+        error => reject(error)
       );
     });
   }
@@ -109,9 +107,7 @@ const HipChatAPI = class {
           installation.tokenUrl = capabilities['capabilities']['oauth2Provider']['tokenUrl'];
           // Save the API endpoint URL along with the client credentials
           installation.apiUrl = capabilities['capabilities']['hipchatApiProvider']['url'];
-          _this.setInstallationInStore(installation).then(
-            (data) => resolve(data),
-            (error) => reject(error));
+          _this.setInstallationInStore(installation).then(resolve, reject);
         }
       });
 
@@ -195,7 +191,7 @@ const HipChatAPI = class {
       let installation = yield _this.getInstallationFromStore(oauthId);
       let notificationUrl = installation.apiUrl + 'room/' + roomId + '/notification';
       let accessToken = yield _this.getAccessToken(oauthId);
-      _this.logger.log('debug', 'Attempting to send message', { notificationUrl: notificationUrl, message: message });
+      _this.logger.debug('Attempting to send message', { notificationUrl: notificationUrl, message: message });
       return new Promise((resolve, reject) => {
         request.post(notificationUrl, {
           auth: {
@@ -204,10 +200,10 @@ const HipChatAPI = class {
           json: message
         }, (err, response, body) => {
           if (err) {
-            _this.logger.log('error', 'Could not send message', err);
+            _this.logger.error('Could not send message', err);
             reject(err);
           } else {
-            _this.logger.log('debug', 'successfully sent meesage');
+            _this.logger.debug('successfully sent meesage');
             resolve(response);
           }
         });
@@ -250,13 +246,13 @@ const HipChatAPI = class {
   */
   updateGlanceData(oauthId, roomId, glanceKey, glanceData) {
     let _this = this;
-    this.logger.log('debug', 'in updateGlanceData');
+    this.logger.debug('in updateGlanceData');
     return co(function* () {
       let installation = yield _this.getInstallationFromStore(oauthId);
-      _this.logger.log('debug', 'got installation from store');
+      _this.logger.debug('got installation from store');
       let roomGlanceUpdateUrl = installation.apiUrl + 'addon/ui/room/' + roomId;
       let accessToken = yield _this.getAccessToken(oauthId);
-      _this.logger.log('debug', 'got accessToken trying to update');
+      _this.logger.debug('got accessToken trying to update');
       return yield new Promise((resolve, reject) => {
         request.post(roomGlanceUpdateUrl, {
           auth: {
@@ -270,10 +266,10 @@ const HipChatAPI = class {
           }
         }, function (err, response, body) {
           if (err) {
-            _this.logger.log('error', 'Could not update glance', err);
+            _this.logger.error('Could not update glance', err);
             reject(err);
           } else {
-            _this.logger.log('info', 'successfully updated glance', body);
+            _this.logger.info('successfully updated glance', body);
             resolve(body);
           }
         });
