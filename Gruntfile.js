@@ -50,6 +50,7 @@ module.exports = function (grunt) {
         src: '**',
         dest: 'client/dist/',
         options: {
+          noProcess: ['**/*.{png,gif,jpg,ico,psd}'],
           process: function (content, srcpath) {
             return substituteConfigAndDescriptorInTemplate(content, 'dev');
           }
