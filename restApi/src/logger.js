@@ -7,14 +7,14 @@ import winston from 'winston';
 * $ npm install winston-rollbar
 */
 
-const createLogger = level => {
-  return new (winston.Logger)({
+const createLogger = level =>
+  new (winston.Logger)({
     transports: [
       new (winston.transports.Console)({
-        level: level
-      })
-    ]
+        level,
+      }),
+    ],
   });
-};
 
+export default createLogger;
 export { createLogger };

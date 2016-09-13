@@ -15,7 +15,8 @@ import { getDbManager } from './dynamo_db_manager';
 
 // Constants - deal with root_dir difference when working locally/offline
 const CONFIG_FILE_PATH = process.env.IS_OFFLINE ? './restApi/config.json' : './config.json';
-const CAPABILITIES_FILE_PATH = process.env.IS_OFFLINE ? './restApi/atlassian-connect.json' : './atlassian-connect.json';
+const CAPABILITIES_FILE_PATH = process.env.IS_OFFLINE
+  ? './restApi/atlassian-connect.json' : './atlassian-connect.json';
 
 /* ----- MODULE CONSTRUCTOR ----- */
 
@@ -28,8 +29,8 @@ const CAPABILITIES_FILE_PATH = process.env.IS_OFFLINE ? './restApi/atlassian-con
 *   capabilitiesFile: './path'
 * }
 */
-const getIndex = (params) => {
-  let options = params || {};
+const getIndex = params => {
+  const options = params || {};
 
   // Create a logger for our logic
   const config = getApplicationConfiguration(options.configFile || CONFIG_FILE_PATH);
@@ -41,7 +42,7 @@ const getIndex = (params) => {
   // Let's be lazy about loading capabilities
   const getCapabilities = () => {
     logger.debug('Loading capabilities descriptor', process.env.SERVERLESS_STAGE);
-    let capabilities = getCapabilityDescriptor(CAPABILITIES_FILE_PATH, config);
+    const capabilities = getCapabilityDescriptor(CAPABILITIES_FILE_PATH, config);
     logger.info('Capabilities descriptor loaded');
     logger.debug('Capabilities descriptor:', capabilities);
     return capabilities;
@@ -52,10 +53,10 @@ const getIndex = (params) => {
   logger.info('DynamoDB Manager loaded');
 
   return {
-    logger: logger,
-    config: config,
-    getCapabilities: getCapabilities,
-    dbManager: dbManager
+    logger,
+    config,
+    getCapabilities,
+    dbManager,
   };
 };
 

@@ -1,11 +1,11 @@
 // Require handlers
-import * as descriptor from './descriptor.js';
-import * as echo from './echo.js';
-import * as glanceData from './glance_data.js';
-import * as installed from './installed.js';
-import * as postCard from './post_card.js';
-import * as uninstalled from './uninstalled.js';
-import * as updateGlance from './update_glance.js';
+import descriptor from './descriptor.js';
+import echo from './echo.js';
+import glanceData from './glance_data.js';
+import installed from './installed.js';
+import postCard from './post_card.js';
+import uninstalled from './uninstalled.js';
+import updateGlance from './update_glance.js';
 
 // Endpoint constants
 const DESCRIPTOR_ENDPOINT = '/descriptor';
@@ -41,7 +41,7 @@ const jwtEndpoints = [
   ECHO_ENDPOINT,
   GLANCE_DATA_ENDPOINT,
   UPDATE_GLANCE_ENDPOINT,
-  POST_CARD_ENDPOINT
+  POST_CARD_ENDPOINT,
 ];
 
 export { endpointHandlers, jwtEndpoints };

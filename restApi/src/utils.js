@@ -1,26 +1,26 @@
-'use strict';
-
 const parseWeirdAPIGatewayFormat = input => {
   const sanitisedInput = input.replace(/[\{\}]/g, '');
-  let output = {};
-  sanitisedInput.split(/\,/).forEach((parameterPairString) => {
-    const parameterPairArray = parameterPairString.trim().split(/\=/);
+  const output = {};
+  sanitisedInput.split(/,/).forEach(parameterPairString => {
+    const parameterPairArray = parameterPairString.trim().split(/=/);
     output[parameterPairArray[0]] = parameterPairArray.slice(1).join('=');
   });
 
   return output;
 };
 
-const parseQueryParams = (input) => {
-  if (typeof input === 'object') {
-    return input;
-  } else {
+const parseQueryParams = input => {
+  let result = input;
+  if (typeof input !== 'object') {
     try {
-      return JSON.parse(input);
+      result = JSON.parse(input);
     } catch (e) {
-      return parseWeirdAPIGatewayFormat(input);
+      result = parseWeirdAPIGatewayFormat(input);
     }
   }
+
+  return result;
 };
 
+export default parseQueryParams;
 export { parseQueryParams };

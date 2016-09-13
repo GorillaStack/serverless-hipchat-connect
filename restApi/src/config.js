@@ -13,9 +13,7 @@ import fs from 'fs';
 
 const FILE_ENCODING = 'utf8';
 
-const substituteConfigInTemplate = (data, config) => {
-  return _.template(data)(config);
-};
+const substituteConfigInTemplate = (data, config) => _.template(data)(config);
 
 /**
 * getConfigurationForServerlessStage
@@ -26,7 +24,7 @@ const substituteConfigInTemplate = (data, config) => {
 * "environment": { "SERVERLESS_STAGE": "${stage}" },
 */
 const getConfigurationForServerlessStage = data => {
-  let jsonData = JSON.parse(data);
+  const jsonData = JSON.parse(data);
   return jsonData[process.env.SERVERLESS_STAGE];
 };
 
@@ -34,12 +32,12 @@ const readFile = file =>
   fs.readFileSync(file, { encoding: FILE_ENCODING });
 
 const getCapabilityDescriptor = (file, config) => {
-  let data = readFile(file);
+  const data = readFile(file);
   return substituteConfigInTemplate(data, config);
 };
 
 const getApplicationConfiguration = file => {
-  let data = readFile(file);
+  const data = readFile(file);
   return getConfigurationForServerlessStage(data);
 };
 

@@ -15,6 +15,17 @@ import request from 'request';
 // Constants
 const OAUTH_ID_ATTRIBUTE_NAME = 'oauthId';
 
+
+// Helper
+const firstItemOrUndefined = (data, pluckValue) => {
+  if (data.Count > 0) {
+    const item = data.Items[0];
+    return pluckValue ? item[pluckValue] : item;
+  }
+
+  return undefined;
+};
+
 /* ------ LOGIC ------ */
 
 const HipChatAPI = class {
@@ -35,33 +46,31 @@ const HipChatAPI = class {
   * @return {Promise} - resolves to a token
   */
   refreshAccessToken(installation) {
-    let _this = this;
-    let params = this.getRefreshAccessTokenParams(installation);
+    const params = this.getRefreshAccessTokenParams(installation);
 
     return new Promise((resolve, reject) => {
-      request.post(params, function (err, response, body) {
+      request.post(params, (err, response, body) => {
         if (err) {
           reject(err);
         } else {
-          let accessToken = JSON.parse(body);
-          _this.setAccessTokenInStore({
+          const accessToken = JSON.parse(body);
+          this.setAccessTokenInStore({
             // Add a minute of leeway
             oauthId: installation.oauthId,
-            expirationTimeStamp: Date.now() + ((accessToken['expires_in'] - 60) * 1000),
-            token: accessToken
-          }).then(() => resolve(accessToken), (error) => reject(error));
+            expirationTimeStamp: Date.now() + ((accessToken.expires_in - 60) * 1000),
+            token: accessToken,
+          }).then(() => resolve(accessToken), reject);
         }
       });
     });
   }
 
   getAccessTokenFromStore(oauthId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) =>
       this.dbManager.query(process.env.ACCESS_TOKEN_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId).then(
         data => resolve(firstItemOrUndefined(data, 'token')),
-        error => reject(error)
-      );
-    });
+        reject
+      ));
   }
 
   setAccessTokenInStore(item) {
@@ -73,12 +82,11 @@ const HipChatAPI = class {
   }
 
   getInstallationFromStore(oauthId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) =>
       this.dbManager.query(process.env.INSTALLATION_TABLE, OAUTH_ID_ATTRIBUTE_NAME, oauthId).then(
         data => resolve(firstItemOrUndefined(data)),
-        error => reject(error)
-      );
-    });
+        reject
+      ));
   }
 
   setInstallationInStore(item) {
@@ -96,36 +104,34 @@ const HipChatAPI = class {
   * in our installation store
   */
   saveInstallation(installation) {
-    let _this = this;
+    const inst = installation;
     return new Promise((resolve, reject) => {
-      request.get(installation.capabilitiesUrl, function (err, response, body) {
+      request.get(installation.capabilitiesUrl, (err, response, body) => {
         if (err) {
           reject(err);
         } else {
-          let capabilities = JSON.parse(body);
+          const capabilities = JSON.parse(body);
           // Save the token endpoint URL along with the client credentials
-          installation.tokenUrl = capabilities['capabilities']['oauth2Provider']['tokenUrl'];
+          inst.tokenUrl = capabilities.capabilities.oauth2Provider.tokenUrl;
           // Save the API endpoint URL along with the client credentials
-          installation.apiUrl = capabilities['capabilities']['hipchatApiProvider']['url'];
-          _this.setInstallationInStore(installation).then(resolve, reject);
+          inst.apiUrl = capabilities.capabilities.hipchatApiProvider.url;
+          this.setInstallationInStore(inst).then(resolve, reject);
         }
       });
-
     });
   }
 
   removeInstallation(installationUrl) {
-    let _this = this;
+    const _this = this;
     return co(function* () {
-      let installation = yield new Promise((resolve, reject) => {
-        request.get(installationUrl, function (err, response, body) {
+      const installation = yield new Promise((resolve, reject) =>
+        request.get(installationUrl, (err, response, body) => {
           if (err) {
             reject(err);
           } else {
             resolve(JSON.parse(body));
           }
-        });
-      });
+        }));
 
       yield _this.deleteAccessTokenFromStore(installation.oauthId);
       yield _this.deleteInstallationFromStore(installation.oauthId);
@@ -140,16 +146,17 @@ const HipChatAPI = class {
       // Basic auth with OAuth credentials received on installation
       auth: {
         username: installation.oauthId,
-        password: installation.oauthSecret
+        password: installation.oauthSecret,
       },
 
       // OAuth dictates application/x-www-form-urlencoded parameters
-      // In terms of scope, you can either to request a subset of the scopes declared in the add-on descriptor
+      // In terms of scope, you can either to request a subset of the scopes
+      // declared in the add-on descriptor
       // or, if you don't, HipChat will use the scopes declared in the descriptor
       form: {
         grant_type: 'client_credentials',
-        scope: 'send_notification'
-      }
+        scope: 'send_notification',
+      },
     };
   }
 
@@ -162,19 +169,17 @@ const HipChatAPI = class {
   * @return {Promise} - resolves to a token
   */
   getAccessToken(oauthId) {
-    let _this = this;
+    const _this = this;
     return co(function* () {
-      let accessToken = yield _this.getAccessTokenFromStore(oauthId);
+      const accessToken = yield _this.getAccessTokenFromStore(oauthId);
+      let promise = new Promise(resolve =>
+        process.nextTick(() => resolve(accessToken)));
       if (!accessToken || _this.isExpired(accessToken)) {
-        let installation = yield _this.getInstallationFromStore(oauthId);
-        return yield _this.refreshAccessToken(installation);
-      } else {
-        return new Promise((resolve, reject) => {
-          process.nextTick(() => {
-            resolve(accessToken);
-          });
-        });
+        const installation = yield _this.getInstallationFromStore(oauthId);
+        promise = _this.refreshAccessToken(installation);
       }
+
+      return yield promise;
     });
   }
 
@@ -186,19 +191,19 @@ const HipChatAPI = class {
   */
 
   sendMessage(oauthId, roomId, message) {
-    let _this = this;
+    const _this = this;
     return co(function* () {
-      let installation = yield _this.getInstallationFromStore(oauthId);
-      let notificationUrl = installation.apiUrl + 'room/' + roomId + '/notification';
-      let accessToken = yield _this.getAccessToken(oauthId);
-      _this.logger.debug('Attempting to send message', { notificationUrl: notificationUrl, message: message });
-      return new Promise((resolve, reject) => {
+      const installation = yield _this.getInstallationFromStore(oauthId);
+      const notificationUrl = `${installation.apiUrl}room/${roomId}/notification`;
+      const accessToken = yield _this.getAccessToken(oauthId);
+      _this.logger.debug('Attempting to send message', { notificationUrl, message });
+      return new Promise((resolve, reject) =>
         request.post(notificationUrl, {
           auth: {
-            bearer: accessToken['access_token']
+            bearer: accessToken.access_token,
           },
-          json: message
-        }, (err, response, body) => {
+          json: message,
+        }, (err, response) => {
           if (err) {
             _this.logger.error('Could not send message', err);
             reject(err);
@@ -206,35 +211,36 @@ const HipChatAPI = class {
             _this.logger.debug('successfully sent meesage');
             resolve(response);
           }
-        });
-      });
+        }));
     });
   }
 
   sendHtmlMessage(oauthId, roomId, text) {
-    let message = {
+    const message = {
       color: 'gray',
       message: text,
-      message_format: 'html'
+      message_format: 'html',
     };
+
     return this.sendMessage(oauthId, roomId, message);
   }
 
   sendSampleCardMessage(oauthId, roomId, description) {
-    let message = {
+    const message = {
       color: 'gray',
-      message: 'this is a backup message for HipChat clients that do not understand cards (old HipChat clients, 3rd party XMPP clients)',
+      message: 'this is a backup message for HipChat clients that do not '
+        + 'understand cards (old HipChat clients, 3rd party XMPP clients)',
       message_format: 'text',
       card: {
         style: 'application',
         id: 'some_id',
         url: 'http://www.stuff.com',
         title: 'Such awesome. Very API. Wow!',
-        description: description,
+        description,
         thumbnail: {
-          url: 'http://i.ytimg.com/vi/8M7Qie4Aowk/hqdefault.jpg'
-        }
-      }
+          url: 'http://i.ytimg.com/vi/8M7Qie4Aowk/hqdefault.jpg',
+        },
+      },
     };
     return this.sendMessage(oauthId, roomId, message);
   }
@@ -245,26 +251,26 @@ const HipChatAPI = class {
   * Update a glance within a HipChat room
   */
   updateGlanceData(oauthId, roomId, glanceKey, glanceData) {
-    let _this = this;
+    const _this = this;
     this.logger.debug('in updateGlanceData');
     return co(function* () {
-      let installation = yield _this.getInstallationFromStore(oauthId);
+      const installation = yield _this.getInstallationFromStore(oauthId);
       _this.logger.debug('got installation from store');
-      let roomGlanceUpdateUrl = installation.apiUrl + 'addon/ui/room/' + roomId;
-      let accessToken = yield _this.getAccessToken(oauthId);
+      const roomGlanceUpdateUrl = `${installation.apiUrl}addon/ui/room/${roomId}`;
+      const accessToken = yield _this.getAccessToken(oauthId);
       _this.logger.debug('got accessToken trying to update');
-      return yield new Promise((resolve, reject) => {
+      return yield new Promise((resolve, reject) =>
         request.post(roomGlanceUpdateUrl, {
           auth: {
-            bearer: accessToken['access_token']
+            bearer: accessToken.access_token,
           },
           json: {
             glance: [{
               key: glanceKey,
-              content: glanceData
-            }]
-          }
-        }, function (err, response, body) {
+              content: glanceData,
+            }],
+          },
+        }, (err, response, body) => {
           if (err) {
             _this.logger.error('Could not update glance', err);
             reject(err);
@@ -272,17 +278,9 @@ const HipChatAPI = class {
             _this.logger.info('successfully updated glance', body);
             resolve(body);
           }
-        });
-      });
+        }));
     });
   }
 };
 
-const firstItemOrUndefined = (data, pluckValue) => {
-  if (data.Count > 0) {
-    let item = data.Items[0];
-    return pluckValue ? item[pluckValue] : item;
-  }
-};
-
-export { HipChatAPI };
+export default HipChatAPI;

@@ -12,20 +12,17 @@ import AWS from 'aws-sdk';
 const SERVERLESS_REGION_ENV_VAR = 'SERVERLESS_REGION';
 const SERVERLESS_OFFLINE_PLUGIN_ACTIVE = 'IS_OFFLINE';
 
-const isEnvironmentComplete = () => {
-  // Future proofing for more env vars required
-  return [SERVERLESS_REGION_ENV_VAR].every((envVar) => {
-    return typeof process.env[envVar] !== 'undefined';
-  });
-};
+// Future proofing for more env vars required
+const isEnvironmentComplete = () =>
+  [SERVERLESS_REGION_ENV_VAR].every(envVar => typeof process.env[envVar] !== 'undefined');
 
 const isConfiguredForDynamoDBLocal =
-  (config) => process.env[SERVERLESS_OFFLINE_PLUGIN_ACTIVE]
+  config => process.env[SERVERLESS_OFFLINE_PLUGIN_ACTIVE]
             && config.useDynamoDBLocal
             && config.dynamoDBLocalURL;
 
 const getDbManager = (config, logger) => {
-  let options = {};
+  const options = {};
 
   if (isEnvironmentComplete()) {
     options.region = process.env[SERVERLESS_REGION_ENV_VAR];
@@ -38,12 +35,12 @@ const getDbManager = (config, logger) => {
     logger.debug('Using dynamodb remote');
   }
 
-  let serviceInterfaceObject = new AWS.DynamoDB(options);
+  const serviceInterfaceObject = new AWS.DynamoDB(options);
 
   return {
     dynamodb: new AWS.DynamoDB.DocumentClient({
       service: serviceInterfaceObject,
-      region: process.env[SERVERLESS_REGION_ENV_VAR]
+      region: process.env[SERVERLESS_REGION_ENV_VAR],
     }),
 
     /**
@@ -52,24 +49,25 @@ const getDbManager = (config, logger) => {
     * Look up table for a given key name and value
     * @return Promise
     */
-    query: function (tableName, keyName, keyValue) {
+    query(tableName, keyName, keyValue) {
       return new Promise((resolve, reject) => {
         const query = {
           TableName: tableName,
           KeyConditionExpression: '#name = :value',
           ExpressionAttributeNames: {
-            '#name': keyName
+            '#name': keyName,
           },
           ExpressionAttributeValues: {
-            ':value': keyValue
-          }
+            ':value': keyValue,
+          },
         };
         this.dynamodb.query(query, (error, data) => {
           if (error) {
-            logger.error('Error querying DynamoDB:', { msg: error.toString(), stack: error.stack, query: query });
+            logger.error('Error querying DynamoDB:',
+              { msg: error.toString(), stack: error.stack, query });
             reject(error);
           } else {
-            logger.debug('query complete:', { query: query, result: data });
+            logger.debug('query complete:', { query, data });
             resolve(data);
           }
         });
@@ -82,17 +80,18 @@ const getDbManager = (config, logger) => {
     * Do a table scan on the given table
     * @return Promise
     */
-    scan: function (tableName) {
+    scan(tableName) {
       return new Promise((resolve, reject) => {
         const params = {
-          TableName: tableName
+          TableName: tableName,
         };
         this.dynamodb.scan(params, (error, data) => {
           if (error) {
-            logger.error('Error scanning DynamoDB:', { msg: error.toString(), stack: error.stack, params: params });
+            logger.error('Error scanning DynamoDB:',
+              { msg: error.toString(), stack: error.stack, params });
             reject(error);
           } else {
-            logger.debug('scan complete:', { params: params, result: data });
+            logger.debug('scan complete:', { params, data });
             resolve(data);
           }
         });
@@ -106,18 +105,19 @@ const getDbManager = (config, logger) => {
     *
     * @return Promise
     */
-    put: function (tableName, item) {
+    put(tableName, item) {
       return new Promise((resolve, reject) => {
         const modifier = {
           TableName: tableName,
-          Item: item
+          Item: item,
         };
         this.dynamodb.put(modifier, (error, data) => {
           if (error) {
-            logger.error('Error putting into DynamoDB:', { msg: error.toString(), stack: error.stack, modifier: modifier });
+            logger.error('Error putting into DynamoDB:',
+              { msg: error.toString(), stack: error.stack, modifier });
             reject(error);
           } else {
-            logger.debug('put complete:', { modifier: modifier, result: data });
+            logger.debug('put complete:', { modifier, data });
             resolve(data);
           }
         });
@@ -131,26 +131,28 @@ const getDbManager = (config, logger) => {
     *
     * @return Promise
     */
-    delete: function (tableName, keyName, keyValue) {
+    delete(tableName, keyName, keyValue) {
       return new Promise((resolve, reject) => {
-        let modifier = {
+        const modifier = {
           TableName: tableName,
-          Key: {}
+          Key: {},
         };
         modifier.Key[keyName] = keyValue;
 
         this.dynamodb.delete(modifier, (error, data) => {
           if (error) {
-            logger.error('Error deleting from DynamoDB:', { msg: error.toString(), stack: error.stack, modifier: modifier });
+            logger.error('Error deleting from DynamoDB:',
+              { msg: error.toString(), stack: error.stack, modifier });
             reject(error);
           } else {
-            logger.debug('delete complete:', { modifier: modifier, result: data });
+            logger.debug('delete complete:', { modifier, data });
             resolve(data);
           }
         });
       });
-    }
+    },
   };
 };
 
+export default getDbManager;
 export { getDbManager };
