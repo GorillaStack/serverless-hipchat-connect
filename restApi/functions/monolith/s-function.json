@@ -75,7 +75,7 @@
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
-        "application/json": "$${glanceDataEndpoint}"
+        "application/json": "$${defaultEndpoint}"
       },
       "responses": {
         "400": {
@@ -129,7 +129,7 @@
       "requestParameters": {},
       "requestTemplates": {
         "application/json": "$${defaultEndpoint}",
-        "application/x-www-form-urlencoded": "$${defaultUrlEncodedEndpoint}"
+        "application/x-www-form-urlencoded": "$${defaultEndpoint}"
       },
       "responses": {
         "400": {
@@ -145,7 +145,8 @@
           }
         }
       }
-    },{
+    },
+    {
       "path": "post-card",
       "method": "OPTIONS",
       "type": "AWS",
@@ -155,7 +156,7 @@
       "requestParameters": {},
       "requestTemplates": {
         "application/json": "$${defaultEndpoint}",
-        "application/x-www-form-urlencoded": "$${defaultUrlEncodedEndpoint}"
+        "application/x-www-form-urlencoded": "$${defaultEndpoint}"
       },
       "responses": {
         "default": {
@@ -207,7 +208,7 @@
       "requestParameters": {},
       "requestTemplates": {
         "application/json": "$${defaultEndpoint}",
-        "application/x-www-form-urlencoded": "$${defaultUrlEncodedEndpoint}"
+        "application/x-www-form-urlencoded": "$${defaultEndpoint}"
       },
       "responses": {
         "400": {

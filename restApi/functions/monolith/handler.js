@@ -2,8 +2,8 @@
 
 // Includes
 const lib = require('../../lib/index').default();
-const HipChatAPI = require('../../lib/hipchat_api').HipChatAPI;
-const validateJWT = require('../../lib/jwt').validateJWT;
+const HipChatAPI = require('../../lib/hipchat_api').default;
+const validateJWT = require('../../lib/jwt').default;
 
 // Include endpoint handlers
 const endpointHandlersIndex = require('../../lib/endpoint-handlers/index');
@@ -33,7 +33,7 @@ const callEndpointHandler = (endpoint, args) => {
   if (endpointHandlers && endpointHandlers[endpoint]) {
     let handler = endpointHandlers[endpoint];
     lib.logger.debug('Found handler');
-    return handler.handler.apply(this, args);
+    return handler.apply(this, args);
   } else {
     lib.logger.debug('Could not find handler');
     throw new Error('No handler found for endpoint ' + endpoint);
@@ -45,7 +45,7 @@ exports.handler = function (event, context, cb) {
   lib.logger.info('Handling endpoint: ', endpoint);
   lib.logger.debug('Event json:', JSON.stringify(event));
 
-  let hipchat = new HipChatAPI(lib.dbManager, lib.logger);
+  const hipchat = new HipChatAPI(lib.dbManager, lib.logger);
 
   applyJWTValidationIfRequired(endpoint, event).then(
     oauthData => callEndpointHandler(endpoint, [lib, hipchat, event, oauthData]).then(
@@ -55,5 +55,4 @@ exports.handler = function (event, context, cb) {
 
     err => handleError(err, cb)
   );
-
 };

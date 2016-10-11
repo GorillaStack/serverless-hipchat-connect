@@ -23,7 +23,7 @@
     "jwt-simple": "^0.5.0",
     "lodash": "^4.13.1",
     "serverless-client-s3": "^2.0.0",
-    "serverless-offline": "^2.8.2",
+    "serverless-offline": "=2.8.1",
     "serverless-optimizer-plugin": "^2.5.1",
     "winston": "^2.2.0"
   },

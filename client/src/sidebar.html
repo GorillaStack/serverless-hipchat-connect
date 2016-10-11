@@ -71,8 +71,8 @@
           $.ajax({
             type: 'POST',
             url: '${host}/post-card',
-            headers: { authorization: 'JWT ' + token },
             data: JSON.stringify({ cardDescription: 'This card was posted from the Sidebar\nPretty cool hey!' }),
+            headers: { Authorization: 'JWT ' + token },
             crossDomain: true,
             contentType: 'application/json',
             dataType: 'json',
@@ -91,7 +91,7 @@
           $.ajax({
             type: 'POST',
             url: '${host}/update-glance',
-            headers: { authorization: 'JWT ' + token },
+            headers: { Authorization: 'JWT ' + token },
             data: JSON.stringify({ glanceText: 'Glance updated from Sidebar' }),
             crossDomain: true,
             contentType: 'application/json',
